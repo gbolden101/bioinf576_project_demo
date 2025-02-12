@@ -158,7 +158,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-54" value="MORE statistical analysis needed for Peak Calling" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="470" y="925" width="191" height="30" as="geometry" />
+          <mxGeometry x="429" y="830" width="191" height="30" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-56" value="" style="endArrow=classic;html=1;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-60" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -190,8 +190,14 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-66" value="Use Granges, Ref file, to find motifs of TFs" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="450" y="1100" width="260" height="60" as="geometry" />
         </mxCell>
+        <mxCell id="kOGGm8QfCaD-iwoYW6c4-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-68" target="kOGGm8QfCaD-iwoYW6c4-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-68" value="Motif visualization" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="450" y="1240" width="260" height="60" as="geometry" />
+          <mxGeometry x="450" y="1220" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kOGGm8QfCaD-iwoYW6c4-1" value="Final Table TF: Most likely motif binding" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="450" y="1340" width="260" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
