@@ -136,8 +136,8 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-46" value="log2FC, padjust CSV" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="60" y="910" width="120" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-48" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="180" y="1030" width="120" height="60" as="geometry" />
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-48" value="Merged CSV&amp;nbsp;&lt;div&gt;Content (RNA-Seq log2FC, Peak location,&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="130" y="1020" width="260" height="60" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-49" value="" style="shape=link;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-41">
           <mxGeometry width="100" relative="1" as="geometry">
@@ -145,20 +145,17 @@
             <mxPoint x="279" y="939.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-51" value="Text" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="310" y="820" width="60" height="30" as="geometry" />
-        </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-52" value="&lt;b&gt;merge by Annotation&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="170" y="980" width="140" height="30" as="geometry" />
+          <mxGeometry x="170" y="970" width="140" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-53" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-54">
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-53" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-41" target="zlOrH_XaMXWNnFcmVBdB-54">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="320" y="860" as="sourcePoint" />
+            <mxPoint x="550" y="890" as="sourcePoint" />
             <mxPoint x="370" y="810" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-54" value="MORE statistical analysis needed for Peak Calling" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="414" y="940" width="191" height="30" as="geometry" />
+          <mxGeometry x="490" y="920" width="191" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
