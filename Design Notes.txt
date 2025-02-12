@@ -1,0 +1,84 @@
+BIOINF 576 pipeline project
+
+Goals and rough pipeline
+
+Gene IDs --> DEG dat and ID Mutation for particular disases.
+
+Find DEGs and mutated per sample
+
+use a workflow manager (SnakeMake) to run QC on FASTQ and FASTA files
+
+Run Aligner --> STARR --> reads
+
+Read Counts --> count matrix
+
+DESEQ/ EdgeR --> log2FC product and gene names
+
+GSEA --> Visual
+
+
+Fleshed out Version
+
+ID differentially expressed genes (DEGs) and mutation specific to particular diseases.
+
+Create, a streamlined workflow that could, contribute to the Galaxy online tool
+
+Integrate Statistical approaces to elucidate pathways affected by the mutations in question
+
+Visualize findings through GSEA and other tools into biological processes
+
+Input RNA-seq raw reads in FASTQ format for expression analysis
+
+FASTA or BAM files format for mutation IDs
+
+Sample groups, conditions, replicates
+
+WorkFlow use SnakeMake to run workflow
+
+2. Quality Control (QC)
+FASTQ QC: Use tools like FastQC to asses quality of RNA-seq reads
+FASTA QC:  SeqKit to quality assessment of genomic sequences
+
+Remove low quality reads/ adaptor sequences and contaminants with Trimmomatic or Cutadapt
+
+Seq Alignment:
+
+STAR for RNA-seq Alignment
+
+Ouputs 
+Aligned files in BAM format
+Alignment statistics for quality checks
+
+Read Counting
+featureCounts or HTseq to generate read Count matrices for RNA-seq
+
+Output: Gene-level count Matrix
+
+DEG Analysis
+
+Tools: DESeq2 or EdgeR for differential expression analysis
+
+Outputs: --> Log2FC, adjusted pvalues
+
+Data Package 1 from Summer internship for DEG analysis to get statistically significant DEGs
+
+Mutation Analysis
+Use GATK or Varscan for calling mutations from aligned genomic data
+
+Annotate mutatations using ANNOVAR or SnpEff
+
+Outs --> Per-Sample mutation data, Gene IDs with annotated mutations
+
+Gene Set Enrichment Analysis GSEA
+
+Input:
+Ranked gene lists (eg. based on log2FC)
+
+ClusterProfiler or my Volcano Plot using ggplot
+
+Further Research needs to bed one
+https://link.springer.com/article/10.1186/s12870-019-1867-y
+
+
+
+

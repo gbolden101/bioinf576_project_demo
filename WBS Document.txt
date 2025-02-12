@@ -1,0 +1,62 @@
+Problem 2A
+ChIP seq Pre-Processing Pipeline
+FASTQ --(FastQC)--> FASTQ --(Trimmomatic/Cutadapt)--> 
+Trimmed FASTQ --(Bowtie2)--> SAM --(SAMtools view)--> 
+BAM --(SAMtools sort)--> Sorted BAM --(SAMtools rmdup)--> 
+Deduplicated BAM --(MACS2)--> Peak Files (narrowPeak/broadPeak) --(HOMER/ChIPseeker)-->
+Annotated Peaks (CSV/TSV)
+
+
+RNA seq Pre-Processing Pipeline
+FASTQ --(FastQC)--> FASTQ --(Trimmomatic/Cutadapt)--> 
+Trimmed FASTQ --(FastQC)--> Trimmed FASTQ --(STAR/HISAT2)--> 
+SAM --(SAMtools view)--> BAM --(SAMtools sort)--> Sorted BAM --(SAMtools index)--> 
+Indexed BAM --(HTSeq-count/featureCounts)--> Raw Count Matrix (TXT/CSV) --(DESeq2/edgeR)--> 
+Differential Expression Results (CSV/TSV)
+
+
+
+Phase1/Module 1:
+
+Pre-Processing and statistical validationChIP, RNA, possibly ATAC-Seq data
+
+Output --> RNA-Seq Count-Matrix, Annotated Peaks with location
+
+Phase2/Module2:
+
+Merging results of phase 1 based on Annotation process
+--> key datatable output (RNA-Seq log2FC, ChIPseq logFC, each respective pvalue, Annotation)
+
+Gene Set Enrichment Functions:
+Use gene oncology functions to find most relavant genes and visual them:
+Scatterplot visuals
+
+Phase3/Module3:
+
+Motiff Finding Using the Peaks from TF ChIP-Seq 
+
+may have to use ATA-Seq to justify predictions and locations 
+by taking advantage of the Histone openings
+Point of Caution: In order for justification to make sense, the experiments used
+to make these datasets must mark the same histone
+
+
+Problem 2B
+The largest challenge will be actualy build the motiff finding function using
+each integrated data type.
+Task 1. Research already existing motiff finding functions
+	goal: summarize the key inputs and outputs.
+
+Task 2. Start building the motiff finding
+	Goal: decide weather it is best to do it R, UNIX or python
+	side-Note--> it completely depends on the integration
+
+Task 3. Integrate the code into the merged file ouput from Module/Phase2 of the project
+	Have a working prototype by the end of March.
+
+
+
+
+
+
+
