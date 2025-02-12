@@ -112,11 +112,20 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-37" value="Remove duplicates using SamTool" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="370" y="690" width="120" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-38" value="Duplicated Peaks" style="whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;spacing=6;spacingTop=-4;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="300" y="880" width="120" height="60" as="geometry" />
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-38" target="zlOrH_XaMXWNnFcmVBdB-41">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-40" value="Remove duplicates using SamTool" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="370" y="810" width="120" height="50" as="geometry" />
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-38" value="narrowPeak, broadPeak" style="whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;spacing=6;spacingTop=-4;direction=south;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="300" y="850" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-40" value="MACS2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="330" y="800" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-41" value="Annotated Peaks CSV" style="whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;spacing=6;spacingTop=-4;direction=south;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="300" y="960" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-43" value="HOMER" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="330" y="910" width="120" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
