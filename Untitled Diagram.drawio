@@ -137,7 +137,7 @@
           <mxGeometry x="60" y="910" width="120" height="50" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-48" value="Merged CSV&amp;nbsp;&lt;div&gt;Content (RNA-Seq log2FC, Peak location,&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="130" y="1020" width="260" height="60" as="geometry" />
+          <mxGeometry x="120" y="1010" width="260" height="60" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-49" value="" style="shape=link;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-41">
           <mxGeometry width="100" relative="1" as="geometry">
@@ -155,7 +155,19 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-54" value="MORE statistical analysis needed for Peak Calling" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="490" y="920" width="191" height="30" as="geometry" />
+          <mxGeometry x="470" y="925" width="191" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-56" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-60">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="249" y="1070" as="sourcePoint" />
+            <mxPoint x="249" y="1130" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="249" y="1100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-60" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="190" y="1109" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
