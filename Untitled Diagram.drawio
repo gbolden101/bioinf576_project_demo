@@ -65,7 +65,7 @@
           <mxGeometry x="294" y="120" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-22" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;b&gt;ChIP-Seq Pre-processing&lt;/b&gt;&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="264" y="80" width="150" height="40" as="geometry" />
+          <mxGeometry x="279" y="90" width="150" height="40" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-23" target="zlOrH_XaMXWNnFcmVBdB-25">
           <mxGeometry relative="1" as="geometry" />
@@ -126,6 +126,9 @@
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-43" value="HOMER" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="330" y="860" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-45" value="Analysis&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="110" y="880" width="140" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
