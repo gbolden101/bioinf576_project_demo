@@ -136,8 +136,11 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-46" value="log2FC, padjust CSV" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="60" y="910" width="120" height="50" as="geometry" />
         </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-67" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-48" target="zlOrH_XaMXWNnFcmVBdB-66">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-48" value="Merged CSV&amp;nbsp;&lt;div&gt;Content (RNA-Seq log2FC, Peak location,&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="120" y="1010" width="260" height="60" as="geometry" />
+          <mxGeometry x="120" y="1000" width="260" height="60" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-49" value="" style="shape=link;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-41">
           <mxGeometry width="100" relative="1" as="geometry">
@@ -180,6 +183,15 @@
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-64" value="Visual results" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="240" y="1210" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-69" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-66" target="zlOrH_XaMXWNnFcmVBdB-68">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-66" value="Use Granges, Ref file, to find motifs of TFs" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="450" y="1100" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-68" value="Motif visualization" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="450" y="1240" width="260" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
