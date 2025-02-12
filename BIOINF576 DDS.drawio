@@ -112,7 +112,7 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-35" value="Duplicated Peaks" style="whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;spacing=6;spacingTop=-4;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="294" y="670" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-37" value="Remove duplicates using SamTool" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-37" value="&lt;b&gt;Remove duplicates using SamTool&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="354" y="620" width="120" height="40" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-38" target="zlOrH_XaMXWNnFcmVBdB-41" edge="1">
