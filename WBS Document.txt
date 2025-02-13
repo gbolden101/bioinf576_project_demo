@@ -2,7 +2,7 @@ Problem 2A
 
 Phase1/Module 1:
 
-Pre-Processing and statistical validationChIP, RNA, possibly ATAC-Seq data
+Pre-Processing and statistical validation ChIP, RNA, possibly ATAC-Seq data
 
 Output --> RNA-Seq Count-Matrix, Annotated Peaks with location
 
