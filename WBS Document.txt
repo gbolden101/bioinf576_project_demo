@@ -1,20 +1,4 @@
 Problem 2A
-ChIP seq Pre-Processing Pipeline Overview
-FASTQ --(FastQC)--> FASTQ --(Trimmomatic/Cutadapt)--> 
-Trimmed FASTQ --(Bowtie2)--> SAM --(SAMtools view)--> 
-BAM --(SAMtools sort)--> Sorted BAM --(SAMtools rmdup)--> 
-Deduplicated BAM --(MACS2)--> Peak Files (narrowPeak/broadPeak) --(HOMER/ChIPseeker)-->
-Annotated Peaks (CSV/TSV)
-
-
-RNA seq Pre-Processing Pipeline Overview
-FASTQ --(FastQC)--> FASTQ --(Trimmomatic/Cutadapt)--> 
-Trimmed FASTQ --(FastQC)--> Trimmed FASTQ --(STAR/HISAT2)--> 
-SAM --(SAMtools view)--> BAM --(SAMtools sort)--> Sorted BAM --(SAMtools index)--> 
-Indexed BAM --(HTSeq-count/featureCounts)--> Raw Count Matrix (TXT/CSV) --(DESeq2/edgeR)--> 
-Differential Expression Results (CSV/TSV)
-
-
 
 Phase1/Module 1:
 
@@ -22,6 +6,7 @@ Pre-Processing and statistical validationChIP, RNA, possibly ATAC-Seq data
 
 Output --> RNA-Seq Count-Matrix, Annotated Peaks with location
 
+Task 1: Investigating the Pre-processing Pipeline
 Question/Explanations:
 
 ----What resources would I use to run my program? (Great Lakes Cluster)
@@ -43,6 +28,11 @@ Follow the example in the snakemake file
 ---First Sub-Task for phase1 --> Make simulated data for each input
 
 
+
+Task 2: Gathering Previous R Code
+	sub-Task: Cleaning up previous R code
+	sub-Task: Testing it with Post-Processed Toy data sets
+
 Phase2/Module2: Omics Combine and GSEA processing
 
 Merging results of phase 1 based on Annotation process
@@ -53,13 +43,11 @@ Use gene oncology functions to find most relavant genes and visual them:
 Scatterplot visuals
 
 
-
+Large Task 3:
 Phase3/Module3: Motiff finding
 
 Motiff Finding Using the Peaks from TF ChIP-Seq 
 
-may have to use ATA-Seq to justify predictions and locations 
-by taking advantage of the Histone openings
 Point of Caution: In order for justification to make sense, the experiments used
 to make these datasets must mark the same histone
 
