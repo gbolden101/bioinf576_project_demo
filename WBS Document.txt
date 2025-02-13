@@ -1,5 +1,5 @@
 Problem 2A
-ChIP seq Pre-Processing Pipeline
+ChIP seq Pre-Processing Pipeline Overview
 FASTQ --(FastQC)--> FASTQ --(Trimmomatic/Cutadapt)--> 
 Trimmed FASTQ --(Bowtie2)--> SAM --(SAMtools view)--> 
 BAM --(SAMtools sort)--> Sorted BAM --(SAMtools rmdup)--> 
@@ -7,7 +7,7 @@ Deduplicated BAM --(MACS2)--> Peak Files (narrowPeak/broadPeak) --(HOMER/ChIPsee
 Annotated Peaks (CSV/TSV)
 
 
-RNA seq Pre-Processing Pipeline
+RNA seq Pre-Processing Pipeline Overview
 FASTQ --(FastQC)--> FASTQ --(Trimmomatic/Cutadapt)--> 
 Trimmed FASTQ --(FastQC)--> Trimmed FASTQ --(STAR/HISAT2)--> 
 SAM --(SAMtools view)--> BAM --(SAMtools sort)--> Sorted BAM --(SAMtools index)--> 
@@ -22,7 +22,28 @@ Pre-Processing and statistical validationChIP, RNA, possibly ATAC-Seq data
 
 Output --> RNA-Seq Count-Matrix, Annotated Peaks with location
 
-Phase2/Module2:
+Question/Explanations:
+
+----What resources would I use to run my program? (Great Lakes Cluster)
+Access, the cluster use  a SLURM account. Use SnakeMake to tie each of the pre-processing. 
+Follow the example in the snakemake file
+
+---If I am using Command Line for pre-processing the 'omics' data how would I use SnakeMake for this?
+
+----How would other users run this code? --> Direct them to the README of the snakemake file
+
+---How are each of the preprocessing step strung together? (SnakeMake)
+
+---What are the reasons and specific steps required for each preprocessing step?
+(Go through the ChIP, RNA Seq PP (gaurunteed to be used))
+(ATAC-Seq data PP can be tact on for later) All the details are in the DDS.
+
+---Once we have count matrix, How would the statistical power for each dataset be justified (Using RStudio)
+
+---First Sub-Task for phase1 --> Make simulated data for each input
+
+
+Phase2/Module2: Omics Combine and GSEA processing
 
 Merging results of phase 1 based on Annotation process
 --> key datatable output (RNA-Seq log2FC, ChIPseq logFC, each respective pvalue, Annotation)
@@ -31,7 +52,9 @@ Gene Set Enrichment Functions:
 Use gene oncology functions to find most relavant genes and visual them:
 Scatterplot visuals
 
-Phase3/Module3:
+
+
+Phase3/Module3: Motiff finding
 
 Motiff Finding Using the Peaks from TF ChIP-Seq 
 
@@ -39,6 +62,12 @@ may have to use ATA-Seq to justify predictions and locations
 by taking advantage of the Histone openings
 Point of Caution: In order for justification to make sense, the experiments used
 to make these datasets must mark the same histone
+
+Current Task
+Research How a motiff finder in Rstudio works using GRanges, the ref gene and the integrated omics matrix.
+
+
+
 
 
 Problem 2B
