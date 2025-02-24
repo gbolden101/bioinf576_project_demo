@@ -3,7 +3,7 @@ Input of sim_chip_seq : Nothing
 Output: sim_reads.txt (FASTQ file)
 Should be less than 3Kb
 
-Purpose: for the development of a ChIP-Seq preprocessing pipeling
+Purpose: for the development of a ChIP-Seq preprocessing pipeline
 
 Intrusctions
 1. Create a directory with the Rscript inside
