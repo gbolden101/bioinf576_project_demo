@@ -3,15 +3,16 @@
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/ChIPsim/inst/doc/ChIPsimIntro.pdf
 
 if(!require(dplyr)) install.packages("dplyr", dependencies=TRUE)
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("ChIPsim")
+if(!require("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("ChIPsim")
 if(!require(purrr)) install.packages("purrr", dependencies=TRUE)
+if(!require(testthat)) install.packages("testthat", dependencies=TRUE)
 
+library(testthat)
 library(ChIPsim)
 library(tidyverse)
 
 set.seed(1)
 
-#big note still not done because the referance genome needs to be mmu
 #creating the reference genome is crucial for simulation step
 #creating reference genome, controls the length of reference genome
 #passed to the n function
@@ -73,7 +74,27 @@ nReads <- 100
 simulated <- simChIP(nReads, genome, 
                      file = "test", functions = myFunctions, 
                      control = defaultControl(readDensity=list(meanLength = 150)))
-######################################
+
+#-------------------------------------
+#original coding starts here
+#unit test for simChIP function
+test_that("defaultFunctions returns a valid function list", {
+  myFunctions <- defaultFunctions()
+  
+  # Ensure defaultFunctions() returns a list
+  expect_type(myFunctions, "list")
+  
+  # Ensure readSequence function exists in the list
+  expect_true("readSequence" %in% names(myFunctions))
+  
+  # Replace readSequence function and check if replacement is successful
+  myFunctions$readSequence <- dfReads
+  expect_identical(myFunctions$readSequence, dfReads)
+})
+# I only had time to create a unit-test for the simChIP fxn.
+##--------------------------------------
+
+#formating reads, read_names and qscores for file output
 simmed_reads <- simulated$readSequence %>% 
                   tibble() %>% 
                 dplyr::select(sequence) %>% 
@@ -102,12 +123,9 @@ reads <- pmap(list(simmed_names$name, simmed_reads$sequence, simmed_qscores$qual
 lines <- walk(reads, function(read) {
   cat(read$id, "\n", read$seq, "\n", read$plus, "\n", read$quality, "\n\n", sep="")
 })
+#exporting FASTQ
 
-file_name <- "sim_reads"
-
-fastq_entry <- unlist(lines)
-
-writeLines(fastq_entry, file_name)
+writeLines(unlist(lines), "sim_reads")
 
 
 
