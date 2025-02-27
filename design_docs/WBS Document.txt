@@ -72,8 +72,15 @@ Task 3. Integrate the code into the merged file ouput from Module/Phase2 of the 
 	Have a working prototype by the end of March.
 
 
+Post Feedback.
+Easy Task 1: To have well documented code and read the paper Britton posted on the Issue:
+https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-4528-x
+
+Medium task 1: Actually coming up with a new feature after the first problem has been solved
 
 
+Current Tasks 2/26/25:
+Finding down-sized RNA-Seq data and starting the ChiP-Preprocessing Pipeline using snakemake
 
 
 
