@@ -78,9 +78,19 @@ https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-4528-x
 
 Medium task 1: Actually coming up with a new feature after the first problem has been solved
 
+Medium Task 2: Re-organize some of the code into correct directories and integrate better coding practices Abhirath noted down
+	--R package development demands that the code files are in a directory named R
+	--R packages have their own DESCRIPTION files for specifying imports, which are resolved when the package is downloaded.
+Personal Note: still impressed at how really good my cohort is at coding.
 
-Current Tasks 2/26/25:
+Tasks 2/26/25: Complete
 Finding down-sized RNA-Seq data and starting the ChiP-Preprocessing Pipeline using snakemake
+Made RNA-seq paired-end RNA-Seq data from Chr1 mm10 and Polyester. Have not uploaded of GitHub yet
+
+Task 2/28/25:
+Construct the SnakeMake pipeline for ChIP-Seq
+Big note: May use a mm10 Chr1 as the "referance genome" for the simChIP inputs.
+Input simChIP reads, Output: Annotated ChIP Peaks.
 
 
 
