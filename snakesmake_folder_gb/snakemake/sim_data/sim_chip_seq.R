@@ -72,7 +72,7 @@ myFunctions$readSequence <- dfReads
 nReads <- 100
 
 simulated <- simChIP(nReads, genome, 
-                     file = "test", functions = myFunctions, 
+                     file = "./sim_chip_output/test", functions = myFunctions, 
                      control = defaultControl(readDensity=list(meanLength = 150)))
 
 #-------------------------------------
@@ -125,7 +125,7 @@ lines <- walk(reads, function(read) {
 })
 #exporting FASTQ
 
-writeLines(unlist(lines), "sim_reads")
+writeLines(unlist(lines), "./sim_chip_output/sim_reads")
 
 
 
