@@ -26,15 +26,7 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   #How to make example inputs for the function
   # chr1_ann.fa made using the following commands cmdline
   # extract chr1 from the the mm10 gtf file: mm10.ncbiRefSeq.gtf
-<<<<<<< HEAD
-<<<<<<< HEAD
-  # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf
-=======
   # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf 
->>>>>>> 63c189e6cf39ba4b86f6215cc0bb92d0d215de95
-=======
-  # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf 
->>>>>>> 63c189e6cf39ba4b86f6215cc0bb92d0d215de95
   # samtools faidx GRCm38.p6.genome.fa chr1 > chr1.fa
   # bedtools getfasta -name -fi chr1.fa -bed chr1_mm10_ncbirefseq.gtf > chr1_ann.fa
   
@@ -50,7 +42,7 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   
   #the small fasta will be the 20 transcripts of annotated mm10_chr1
   #write out the small_fasta_file
-  writeXStringSet(small_fasta, './polyester_input/small_fasta.fa')
+  writeXStringSet(small_fasta, './inputs/small_fasta.fa')
   
   #~ 20X coverage reads per transcript = transcriptlength/readlength * 20
   # here all transcripts will have ~equal FPKM
@@ -64,7 +56,7 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   # num_reps --> number of replicates per group: in this case here we have 2 groups with 10 replicates each, but you can have as many groups as you like)
   
   #outdirectory: user provided
-  return(simulate_experiment(fasta = './polyester_input/small_fasta.fa',
+  return(simulate_experiment(fasta = './inputs/small_fasta.fa',
                              reads_per_transcript = readspertx, 
                              num_reps=c(10,10), 
                              fold_changes = fold_changes[,1],
@@ -72,7 +64,7 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   
 }
 
-input_fasta_file <- './polyester_input/chr1_ann.fa'
+input_fasta_file <- './inputs/chr1_ann.fa'
 read_outdir <- 'sim_rnaseq_reads'
 
 

@@ -16,15 +16,12 @@ set.seed(1)
 #creating the reference genome is crucial for simulation step
 #creating reference genome, controls the length of reference genome
 #passed to the n function
-chrLen <- c(2e5, 1e5)
-# Paste DNA bases for n number of times collapse into no spaces
-DNA_BASES <- c("A", "T", "G", "C")
-chromosomes <- sapply(chrLen, function(n) paste(sample(DNA_BASES, n, replace = TRUE), collapse = ""))
 
-#paste the CHR for each n  of chromosomes
-names(chromosomes) <- paste("CHR", seq_along(chromosomes))
-# makes a DNAString object out of the chromosomes
-genome <- Biostrings::DNAStringSet(chromosomes)
+fasta_file <- './inputs/chr1_limit.fa'
+
+fasta = readDNAStringSet(fasta_file)
+
+genome <- fasta
 
 
 
@@ -125,7 +122,7 @@ lines <- walk(reads, function(read) {
 })
 #exporting FASTQ
 
-writeLines(unlist(lines), "./sim_chip_output/sim_reads")
+writeLines(unlist(lines), "./sim_chip_output/sim_reads.fastq")
 
 
 

@@ -1,0 +1,13 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - Bioinformatics
+dependencies:
+  - snakemake-minimal=7.24.0  # Updated version for better compatibility
+  - fastqc=0.11.9
+  - cutadapt=3.5
+  - bowtie2=2.4.1
+  - samtools=1.16.1
+  - macs2=2.2.9.1
+  - homer=4.11

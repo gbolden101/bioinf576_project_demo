@@ -1,0 +1,41 @@
+#BIG NOTE, RULE ALL HAS TO UPDATED WITH THE MOST RECENT OUTPUT TO WORK
+rule all:
+    input:
+        "../chip_fastqc_results/cut_sim_reads_fastqc.html",
+        "../chip_fastqc_results/cut_sim_reads_fastqc.zip"
+
+rule cutadapt:
+        input:
+            "../data/sim_reads.fastq"
+        output:
+            "../chip_cutadapt/cut_sim_reads.fastq"
+            
+        shell:
+            "mkdir -p ../chip_cutadapt && cutadapt -a AGATCGGAAGAGC -o {output} {input}"
+
+#connect chain cutadapt ---> fastqc
+#seperate depedancies
+
+rule fastqc:
+        input:
+            "../chip_cutadapt/cut_sim_reads.fastq"
+            
+        output:
+            "../chip_fastqc_results/cut_sim_reads_fastqc.html",
+            "../chip_fastqc_results/cut_sim_reads_fastqc.zip"
+        
+        threads: 4
+        
+        shell:
+            "mkdir -p ../chip_fastqc_results && fastqc --outdir ../chip_fastqc_results -t {threads} {input} - > {output}"
+ 
+#BIG NOTE ONCE FINISHED THIS WILL HAVE TO BE UPDATED FOR LARGER FILES           
+
+
+#Aligning the cut_reads using bowtie2
+#fix up the chip-seq script to use Chr1 instead of a simmed ref genome
+
+
+# connect chain cutadapt ----> fastqc
+#                          |
+#                          |---->align_reads
