@@ -21,6 +21,16 @@ You could either use the inputs provided on the polyester GitHub for sim_rnaseq 
   # samtools faidx GRCm38.p6.genome.fa chr1 > chr1.fa
   # bedtools getfasta -name -fi chr1.fa -bed chr1_mm10_ncbirefseq.gtf > chr1_ann.fa
 
+#Making the referance genome for ChIP
+# This referance genome should be just the sequences made from chr1_ann.fa
+#download GRCm38.p6.genome.fa and mm10.ncbiRefSeq.gtf from NCBI
+# awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf
+# samtools faidx GRCm38.p6.genome.fa chr1 > chr1.fa
+# start=$(awk '$1 !~ /^#/ {print $4}' chr1_mm10_ncbirefseq.gtf | sort -n | head -1)
+# end=$(awk '$1 !~ /^#/ {print $5}' chr1_mm10_ncbirefseq.gtf | sort -n | tail -1)
+# samtools faidx chr1.fa chr1:$start-$end > chr1_limit.fa
+# you can use this file as the referance genome for ChIP script
+
 
 
 Next Goals: 
