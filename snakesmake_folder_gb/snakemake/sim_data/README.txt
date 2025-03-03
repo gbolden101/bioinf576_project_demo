@@ -30,6 +30,7 @@ You could either use the inputs provided on the polyester GitHub for sim_rnaseq 
 # samtools faidx GRCm38.p6.genome.fa chr1 > chr1.fa
 # start=$(awk '$1 !~ /^#/ {print $4}' chr1_mm10_ncbirefseq.gtf | sort -n | head -1)
 # end=$(awk '$1 !~ /^#/ {print $5}' chr1_mm10_ncbirefseq.gtf | sort -n | tail -1)
+# end will give a result of 195mil, just use 6million for the end point. Loading times for ChIPSim will be long
 # samtools faidx chr1.fa chr1:$start-$end > chr1_limit.fa
 # you can use this file as the referance genome for ChIP script
 
