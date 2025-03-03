@@ -1,0 +1,11 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - snakemake-minimal =5.2.4
+  - fastqc =1.18
+  - cutapapt =1.18
+  - samtools =1.9
+  - py-macs2 =2.2.4
+  - homer =4.11.1
