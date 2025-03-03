@@ -27,7 +27,11 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   # chr1_ann.fa made using the following commands cmdline
   # extract chr1 from the the mm10 gtf file: mm10.ncbiRefSeq.gtf
 <<<<<<< HEAD
+<<<<<<< HEAD
   # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf
+=======
+  # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf 
+>>>>>>> 63c189e6cf39ba4b86f6215cc0bb92d0d215de95
 =======
   # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf 
 >>>>>>> 63c189e6cf39ba4b86f6215cc0bb92d0d215de95
