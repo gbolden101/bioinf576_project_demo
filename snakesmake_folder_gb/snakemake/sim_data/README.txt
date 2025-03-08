@@ -38,3 +38,6 @@ You could either use the inputs provided on the polyester GitHub for sim_rnaseq 
 
 Next Goals: 
 1. Start constructing the snamke_make pipeline to access out sim_data
+2. 3/8/25 goals convert sam to bam.
+3. implement real vs sim conditional on bowtie 
+4.Ultimate Goal: finish ChIP-PP before spring break is over and get the RNA-Seq one done (YOU GOT THIS))
