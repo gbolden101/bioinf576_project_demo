@@ -1,0 +1,3 @@
+real_reads: []
+sim_reads:
+- ../data/sim_reads

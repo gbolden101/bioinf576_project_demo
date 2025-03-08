@@ -1,28 +1,54 @@
 #BIG NOTE, RULE ALL HAS TO UPDATED WITH THE MOST RECENT OUTPUT TO WORK
+import yaml
+import subprocess
+subprocess.run(["python", "sim_real_reads.py"], check = True)
+
+
+configfile: "config_reads.yaml"
+
+REAL_SAMPLES = config["real_reads"]
+SIM_SAMPLES = config["sim_reads"]
+
+print("Real Samples:", REAL_SAMPLES[:10])
+print("Simulated samples:", SIM_SAMPLES)
+
 rule all:
     input:
-        "../chip_fastqc_results/cut_sim_reads_fastqc.html",
-        "../chip_fastqc_results/cut_sim_reads_fastqc.zip"
+        "../aligned_chip_reads/chip_alignments.sam"
+
+
+def get_cut_input(wildcards):
+        if wildcards.sample in SIM_SAMPLES:
+        
+            return f"chip_reads/{wildcards.sample}.fastq"
+        else:
+            return f"../chip_cutadapt/cut_{wildcards.sample}.fastq"
 
 rule cutadapt:
-        input:
-            "../data/sim_reads.fastq"
-        output:
-            "../chip_cutadapt/cut_sim_reads.fastq"
+    input:
+        "../data/{sample}.fastq"
+    output:
+        "../chip_cutadapt/cut_{sample}.fastq"
+    shell:
+        """
+        mkdir -p ../chip_cutadapt &&
+        cutadapt -a AGATCGGAAGAGC -o {output} {input}
+        """
             
-        shell:
-            "mkdir -p ../chip_cutadapt && cutadapt -a AGATCGGAAGAGC -o {output} {input}"
 
 #connect chain cutadapt ---> fastqc
 #seperate depedancies
 
 rule fastqc:
         input:
-            "../chip_cutadapt/cut_sim_reads.fastq"
+            lambda wildcards: get_cut_input(wildcards)
+            # wildcards are only available when Snakemake exectus a rule
+            #When parsing the object wildcards doe snot exist yet
+            #lamda essentially delays the function fun until the rule cutadapt has been exectuted
             
         output:
-            "../chip_fastqc_results/cut_sim_reads_fastqc.html",
-            "../chip_fastqc_results/cut_sim_reads_fastqc.zip"
+            "../chip_fastqc_results/sim_reads_fastqc.html",
+            "../chip_fastqc_results/sim_reads_fastqc.zip"
         
         threads: 4
         
@@ -39,3 +65,24 @@ rule fastqc:
 # connect chain cutadapt ----> fastqc
 #                          |
 #                          |---->align_reads
+
+# Similar to the conditional issue with cutadapt and making this script more generalizable (sim_reads vs reals_reads)
+# We have to make a bowtie input function due to way snakemake will parse then execute the rules
+# This similar to what had to happen with the fastqc condition and rule.
+#Personal Note. Very interesting to learn more about the python/snakemake interactions
+
+
+rule bowtie2_alignment:
+        input:
+            fastq= "../data/sim_reads.fastq",
+            reference="../sim_data/inputs/chr1_limit.fa"
+        
+        output:
+            "../aligned_chip_reads/chip_alignments.sam"
+    
+        shell:
+            """
+            mkdir -p ../aligned_chip_reads &&
+            bowtie2-build {input.reference} ../sim_data/inputs/chr1_limit &&
+            bowtie2 -x ../sim_data/inputs/chr1_limit -q -U {input.fastq} -S {output} --local -p 8
+            """

@@ -17,7 +17,7 @@ set.seed(1)
 #creating reference genome, controls the length of reference genome
 #passed to the n function
 
-fasta_file <- './inputs/chr1_limit.fa'
+fasta_file <- '../inputs/chr1_limit.fa'
 
 fasta = readDNAStringSet(fasta_file)
 
@@ -47,7 +47,7 @@ dfReads <- function(readPos, readNames, sequence, readLen, ...){
         ## get quality
         readQual[idx] <- randomQuality(readSeq[idx])
         ## introduce sequencing errors
-        readSeq[idx] <- readError(readSeq[idx], decodeQuality(readQual[idx]))
+        #readSeq[idx] <- readError(readSeq[idx], decodeQuality(readQual[idx]))
         idx <- idx + 1
       }
     }
@@ -69,7 +69,7 @@ myFunctions$readSequence <- dfReads
 nReads <- 100
 
 simulated <- simChIP(nReads, genome, 
-                     file = "./sim_chip_output/test", functions = myFunctions, 
+                     file = "../sim_chip_output/test", functions = myFunctions, 
                      control = defaultControl(readDensity=list(meanLength = 150)))
 
 #-------------------------------------
@@ -122,7 +122,7 @@ lines <- walk(reads, function(read) {
 })
 #exporting FASTQ
 
-writeLines(unlist(lines), "./sim_chip_output/sim_reads.fastq")
+writeLines(unlist(lines), "../../data/sim_reads.fastq")
 
 
 
