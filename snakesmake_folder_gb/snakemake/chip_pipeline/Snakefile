@@ -1,4 +1,5 @@
 #BIG NOTE, RULE ALL HAS TO UPDATED WITH THE MOST RECENT OUTPUT TO WORK
+#This pipeline only works for single end reads right now?
 import yaml
 import subprocess
 subprocess.run(["python", "sim_real_reads.py"], check = True)
@@ -12,9 +13,11 @@ SIM_SAMPLES = config["sim_reads"]
 print("Real Samples:", REAL_SAMPLES[:10])
 print("Simulated samples:", SIM_SAMPLES)
 
+
+#rule all defines the ultimate output of the 
 rule all:
     input:
-        "../aligned_chip_reads/chip_alignments.sam"
+        "../macs2_output/peak_call_summits.bed"
 
 
 def get_cut_input(wildcards):
@@ -86,3 +89,41 @@ rule bowtie2_alignment:
             bowtie2-build {input.reference} ../sim_data/inputs/chr1_limit &&
             bowtie2 -x ../sim_data/inputs/chr1_limit -q -U {input.fastq} -S {output} --local -p 8
             """
+# SAM --(SAMtools view)--> BAM --(SAMtools sort)--> Sorted BAM --(SAMtools rmdup)--> Deduplicated BAM
+
+rule prepsam_deduplicate:
+        input:
+            sam="../aligned_chip_reads/chip_alignments.sam"
+             
+        output:
+            sorted_bam="../sorted_bam/chip_sorted.bam",
+            deduplicated_bam="../sorted_bam/chip_sorted_deduplicated.bam"
+            
+        shell:
+            """
+            mkdir -p ../sorted_bam &&
+            samtools view -b -S {input.sam} | samtools sort -o {output.sorted_bam} &&
+            samtools index {output.sorted_bam} | samtools markdup -r {output.sorted_bam} {output.deduplicated_bam}
+            """
+#set a condition later on where there is a condition and if there is no condition for now we have to just get it done
+#
+rule peak_call:
+        input:
+            deduplicated_bam="../sorted_bam/chip_sorted_deduplicated.bam"
+            
+        output:
+            summits="../macs2_output/peak_call_summits.bed"
+            
+        shell:
+            """
+            mkdir -p ../macs2_output &&
+            macs2 callpeak -t {input.deduplicated_bam} -f BAM -n peak_call --outdir ../macs2_output
+            """
+        
+# MACS2
+# narrowPeak/broadPeak
+# HOMER/ChIPseeker
+
+
+
+
