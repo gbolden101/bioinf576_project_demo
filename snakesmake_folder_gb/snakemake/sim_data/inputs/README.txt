@@ -26,6 +26,8 @@ You could either use the inputs provided on the polyester GitHub for sim_rnaseq 
 #Making the referance genome for ChIPSim
 # This referance genome should be just the sequences made from chr1_ann.fa
 #download GRCm38.p6.genome.fa and mm10.ncbiRefSeq.gtf from NCBI
+# wget ftp://ftp.ensembl.org/pub/release-110/gtf/mus_musculus/Mus_musculus.GRCm38.110.gtf.gz
+# wget https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/genes/mm10.ncbiRefSeq.gtf.gz
 # awk '$1 == "chr1"' mm10.ncbiRefSeq.gtf > chr1_mm10_ncbirefseq.gtf
 # samtools faidx GRCm38.p6.genome.fa chr1 > chr1.fa
 # start=$(awk '$1 !~ /^#/ {print $4}' chr1_mm10_ncbirefseq.gtf | sort -n | head -1)
