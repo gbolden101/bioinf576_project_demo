@@ -1,10 +1,12 @@
 #Tested on R 4.4.0
 # Simulated Data from the ChIPsm documentation
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/ChIPsim/inst/doc/ChIPsimIntro.pdf
+#https://github.com/humburg/ChIPsim/tree/master
 
 if(!require(dplyr)) install.packages("dplyr", dependencies=TRUE)
 if(!require("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("ChIPsim")
 if(!require(purrr)) install.packages("purrr", dependencies=TRUE)
+if(!require(purrr)) install.packages("actuar", dependencies=TRUE)
 if(!require(testthat)) install.packages("testthat", dependencies=TRUE)
 
 library(testthat)
@@ -23,6 +25,140 @@ fasta = readDNAStringSet(fasta_file)
 
 genome <- fasta
 
+#need to add in background and binding features for macs2 to work
+ 
+#Binding site sim divides the genome into a # of non-overlapping binding sites.
+
+#Simulation of BngSites is driven by a markov that with two states BngSites, and background respectively
+
+#lets start by specifying the transition probabilities
+transition <- list(Binding=c(Background=1), Background=c(Binding=0.05, Background=0.95))
+
+# Q: why include background regions?
+# A: A little more realistic to experimental 
+
+#which is simply a numeric vector with the no-zero transition probabilities to other states
+#
+transition <- lapply(transition, "class<-","StateDistribution")
+
+#We will not allow the sequence to start with a binding site
+#the 'stateDistribution'
+initial <- c(Binding=0, Background=1)
+#assign 
+class(initial) <- "StateDistribution"
+
+# define fxn to generate parameters for binding and background region--> (start, length), sampling weight
+
+#arguments: start_pos , 
+#           length of region ,
+#           shape:
+#           scale:
+
+#modeling background
+backgroundFeature <- function(start, length=1000, shape=1, scale=20){
+  #weight of the background feature is generated randomly adding somevariability
+  #rgamma sample from a gamma dist with parameters shape=1, and scale=20
+  #gdist. is right skewed
+  #mean = scale * shape, var = shape * scale^2
+  #
+  weight <- rgamma(1, shape=shape,   scale=scale)
+  params <- list(start = start, length = length, weight = weight)
+  class(params) <- c("Background", "SimulatedFeature")
+  
+  params
+}
+
+#modeling bindingFeatures
+#Uses the Pareto distribution
+# heavy tail: small proportion of values contribute to most,of the distribution's mass
+#Mean: exists only if alpha > 1
+#arguments:
+#pos_start: 
+# length: length of binding site
+# shape: weight estimation input
+# scale: weight estimation input ->
+# (shape * scale): mean of the gamma 
+# enrichment: used to increase the AvWeight of the binding site --> amplifie binding intensity
+# r(): shape of the parameter of pareto dist.
+
+#Using pareto dist (rpareto()), will mean most binding, sites will have small weights, but a few will be extremely high (heavy tail dist)
+
+bindingFeature <- function(start, length=500, shape=1, scale=20, enrichment=5, r=1.5){
+  stopifnot(r > 1)
+  
+  avgWeight <- shape * scale * enrichment
+  lowerBound <- ((r - 1) * avgWeight)
+  
+  weight <- actuar::rpareto1(1, r, lowerBound)
+  
+  params <- list(start = start, length = length, weight = weight)
+  class(params) <- c("Binding", "SimulatedFeature")
+  
+  params
+}
+
+# we now have two functions that creates obect that assigns class to object. S3 is essentially OOP in R
+  
+
+
+# save the new feature functions to a vector which we will implement into the ChIPsim later on
+
+generator <- list(Binding=bindingFeature,Background=backgroundFeature)
+  
+
+ 
+features <- ChIPsim::placeFeatures(generator, 
+                                   transition, 
+                                   initial, 
+                                   start = 0, 
+                                   length = Biostrings::width(genome),
+                                   globals=list(shape=1, scale=20),
+                                   experimentType="TFExperiment",      lastFeat=c(Binding = FALSE, Background = TRUE))
+
+bindIdx <- sapply(features, inherits, "Binding")
+
+ 
+constRegion <- function(weight, length) rep(weight, length)
+featureDensity.Binding <- function(feature, ...) constRegion(feature$weight, feature$length)
+featureDensity.Background <- function(feature, ...) constRegion(feature$weight, feature$length)
+  
+
+ 
+featureDensity.Binding <- function(feature, ...){
+  featDens <- numeric(feature$length)
+  featDens[floor(feature$length/2)] <- feature$weight
+  featDens
+}
+  
+
+
+
+dens <- ChIPsim::feat2dens(features, length = Biostrings::width(genome))
+  
+
+
+fragLength <- function(x, minLength, maxLength, meanLength, ...){
+  sd <- (maxLength - minLength)/4
+  prob <- dnorm(minLength:maxLength, mean = meanLength, sd = sd)
+  prob <- prob/sum(prob)
+  prob[x - minLength + 1]
+}
+  
+
+
+readDens <- ChIPsim::bindDens2readDens(dens, fragLength, bind = 50, minLength = 150, maxLength = 250,
+                                       meanLength = 200)
+  
+
+
+featureArgs <- list(generator=generator, transition=transition, init=initial, start = 0, 
+                    length = Biostrings::width(genome), globals=list(shape=1, scale=20), experimentType="TFExperiment", 
+                    lastFeat=c(Binding = FALSE, Background = TRUE), control=list(Binding=list(length=50)))
+
+
+readDensArgs <- list(fragment=fragLength, bind = 50, minLength = 150, maxLength = 250,
+                     meanLength = 200)
+  
 
 
 randomQuality <- function(read){
@@ -66,11 +202,10 @@ dfReads <- function(readPos, readNames, sequence, readLen, ...){
 myFunctions <- defaultFunctions()
 
 myFunctions$readSequence <- dfReads 
-nReads <- 100
+nReads <- 50000
 
-simulated <- simChIP(nReads, genome, 
-                     file = "../sim_chip_output/test", functions = myFunctions, 
-                     control = defaultControl(readDensity=list(meanLength = 150)))
+simulated <- simChIP(nReads, genome, file = "test", functions = myFunctions, 
+                     control = ChIPsim::defaultControl(features=featureArgs, readDensity=readDensArgs))
 
 #-------------------------------------
 #original coding starts here
