@@ -31,7 +31,10 @@ You could either use the inputs provided on the polyester GitHub for sim_rnaseq 
 # samtools faidx chr1.fa chr1:$start-$end > chr1_limit.fa
 # you can use this file as the referance genome for ChIP script
 
-
+#Running RSscripts
+#Work directory should be R
+#Rscript "sim_chip file"
+#Rscript "sim_rna file"
 
 Next Goals: 
 1. Start constructing the snamke_make pipeline to access out sim_data
