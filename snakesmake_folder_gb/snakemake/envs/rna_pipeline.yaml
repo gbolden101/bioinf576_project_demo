@@ -1,0 +1,14 @@
+#small note: BAM to count matrix conversion will require an Rscript featureCounts/HTSeq
+#have integrating an Rscript into a SnakeMake
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - Bioinformatics
+dependencies:
+  - snakemake-minimal=7.24.0  # Updated version for better compatibility
+  - fastqc=0.11.9
+  - cutadapt=3.5
+  - star=2.7.6
+  - samtools=1.16.1
+  - r-base=4.4.0

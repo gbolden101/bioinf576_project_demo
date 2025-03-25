@@ -14,27 +14,30 @@ print("Real Samples:", REAL_SAMPLES[:10])
 print("Simulated samples:", SIM_SAMPLES)
 
 
+
 #rule all defines the ultimate output of the 
 rule all:
     input:
-        "../macs2_output/peak_call_summits.bed"
+        "../chip_output/mac2_output/ann_peaks.txt"
+
 
 
 def get_cut_input(wildcards):
         if wildcards.sample in SIM_SAMPLES:
         
-            return f"chip_reads/{wildcards.sample}.fastq"
+            return f"../chip_output/chip_reads/{wildcards.sample}.fastq"
         else:
-            return f"../chip_cutadapt/cut_{wildcards.sample}.fastq"
+            return f"../chip_output/chip_cutadapt/cut_{wildcards.sample}.fastq"
+
 
 rule cutadapt:
     input:
         "../data/{sample}.fastq"
     output:
-        "../chip_cutadapt/cut_{sample}.fastq"
+        "../chip_output/chip_cutadapt/cut_{sample}.fastq"
     shell:
         """
-        mkdir -p ../chip_cutadapt &&
+        mkdir -p ../chip_output/chip_cutadapt &&
         cutadapt -a AGATCGGAAGAGC -o {output} {input}
         """
             
@@ -50,13 +53,13 @@ rule fastqc:
             #lamda essentially delays the function fun until the rule cutadapt has been exectuted
             
         output:
-            "../chip_fastqc_results/sim_reads_fastqc.html",
-            "../chip_fastqc_results/sim_reads_fastqc.zip"
+            "../chip_output/chip_fastqc_results/sim_reads_fastqc.html",
+            "../chip_output/chip_fastqc_results/sim_reads_fastqc.zip"
         
         threads: 4
         
         shell:
-            "mkdir -p ../chip_fastqc_results && fastqc --outdir ../chip_fastqc_results -t {threads} {input} - > {output}"
+            "mkdir -p ../chip_output/chip_fastqc_results && fastqc --outdir ../chip_output/chip_fastqc_results -t {threads} {input} - > {output}"
  
 #BIG NOTE ONCE FINISHED THIS WILL HAVE TO BE UPDATED FOR LARGER FILES           
 
@@ -81,27 +84,27 @@ rule bowtie2_alignment:
             reference="../sim_data/inputs/chr1_limit.fa"
         
         output:
-            "../aligned_chip_reads/chip_alignments.sam"
+            "../chip_output/aligned_chip_reads/chip_alignments.sam"
     
         shell:
             """
-            mkdir -p ../aligned_chip_reads &&
-            bowtie2-build {input.reference} ../sim_data/inputs/chr1_limit &&
-            bowtie2 -x ../sim_data/inputs/chr1_limit -q -U {input.fastq} -S {output} --local -p 8
+            mkdir -p ../chip_output/aligned_chip_reads &&
+            bowtie2-build ../sim_data/inputs/chr1_limit.fa ../chip_output/aligned_chip_reads/chr1_limit &&
+            bowtie2 -x ../chip_output/aligned_chip_reads/chr1_limit -q -U {input.fastq} -S {output} --local -p 8
             """
 # SAM --(SAMtools view)--> BAM --(SAMtools sort)--> Sorted BAM --(SAMtools rmdup)--> Deduplicated BAM
 
 rule prepsam_deduplicate:
         input:
-            sam="../aligned_chip_reads/chip_alignments.sam"
+            sam="../chip_output/aligned_chip_reads/chip_alignments.sam"
              
         output:
-            sorted_bam="../sorted_bam/chip_sorted.bam",
-            deduplicated_bam="../sorted_bam/chip_sorted_deduplicated.bam"
+            sorted_bam="../chip_output/sorted_bam/chip_sorted.bam",
+            deduplicated_bam="../chip_output/sorted_bam/chip_sorted_deduplicated.bam"
             
         shell:
             """
-            mkdir -p ../sorted_bam &&
+            mkdir -p ../chip_output/sorted_bam &&
             samtools view -b -S {input.sam} | samtools sort -o {output.sorted_bam} &&
             samtools index {output.sorted_bam} | samtools markdup -r {output.sorted_bam} {output.deduplicated_bam}
             """
@@ -109,21 +112,26 @@ rule prepsam_deduplicate:
 #
 rule peak_call:
         input:
-            deduplicated_bam="../sorted_bam/chip_sorted_deduplicated.bam"
+            deduplicated_bam="../chip_output/sorted_bam/chip_sorted_deduplicated.bam"
             
         output:
-            summits="../macs2_output/peak_call_summits.bed"
+            summits="../chip_output/macs2_output/peak_call_summits.bed"
             
         shell:
             """
-            mkdir -p ../macs2_output &&
-            macs2 callpeak -t {input.deduplicated_bam} -f BAM -n peak_call --outdir ../macs2_output
+            mkdir -p ../chip_output/macs2_output &&
+            macs2 callpeak -t {input.deduplicated_bam} -f BAM -n peak_call --outdir ../chip_output/macs2_output --nomodel
             """
-        
-# MACS2
-# narrowPeak/broadPeak
+
 # HOMER/ChIPseeker
-
-
-
-
+#input files needed: mm10_chr1.gtf, chr1_limit.fa, peak_call_file.bed
+rule homer:
+        input:
+            summits="../chip_output/macs2_output/peak_call_summits.bed",
+            gtf="../sim_data/inputs/chr1_mm10_ncbirefseq.gtf"
+        output:
+            ann_peaks="../chip_output/mac2_output/ann_peaks.txt"
+        shell:
+            """
+            annotatePeaks.pl {input.summits} mm10 -gtf {input.gtf} > {output.ann_peaks}
+            """

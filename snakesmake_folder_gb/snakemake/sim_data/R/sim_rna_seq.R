@@ -42,7 +42,7 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   
   #the small fasta will be the 20 transcripts of annotated mm10_chr1
   #write out the small_fasta_file
-  writeXStringSet(small_fasta, './inputs/small_fasta.fa')
+  writeXStringSet(small_fasta, '../inputs/small_fasta.fa')
   
   #~ 20X coverage reads per transcript = transcriptlength/readlength * 20
   # here all transcripts will have ~equal FPKM
@@ -56,16 +56,19 @@ rnaseq_sim_reads <- function(input_fasta_file, read_outdir) {
   # num_reps --> number of replicates per group: in this case here we have 2 groups with 10 replicates each, but you can have as many groups as you like)
   
   #outdirectory: user provided
-  return(simulate_experiment(fasta = './inputs/small_fasta.fa',
+  return(simulate_experiment(fasta = '../inputs/small_fasta.fa',
+                             paired = TRUE,
                              reads_per_transcript = readspertx, 
                              num_reps=c(10,10), 
                              fold_changes = fold_changes[,1],
-                             outdir=read_outdir))
+                             outdir=read_outdir,
+                             seq_error_model = "illumina5",
+                             error_model = "uniform"))
   
 }
 
-input_fasta_file <- './inputs/chr1_ann.fa'
-read_outdir <- 'sim_rnaseq_reads'
+input_fasta_file <- '../inputs/chr1_ann.fa'
+read_outdir <- '../../data/sim_rnaseq_reads'
 
 
 rnaseq_sim_reads(input_fasta_file, read_outdir)
