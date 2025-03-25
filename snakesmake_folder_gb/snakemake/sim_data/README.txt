@@ -16,6 +16,7 @@ You could either use the inputs provided on the polyester GitHub for sim_rnaseq 
 #How to make example inputs for the function
 
 #Making the referance for polyester and CHIPsim
+# working directory at this point: sim_data/inputs
 #download GRCm38.p6.genome.fa and mm10.ncbiRefSeq.gtf from NCBI
   #wget ftp://ftp.ensembl.org/pub/release-110/gtf/mus_musculus/Mus_musculus.GRCm38.110.gtf.gz
   #wget https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/genes/mm10.ncbiRefSeq.gtf.gz
