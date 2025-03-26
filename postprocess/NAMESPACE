@@ -2,6 +2,10 @@
 
 export(deseq_filteration)
 export(df_to_txt)
+export(gsea_dotplot)
+export(gsea_volplot)
+import(RColorBrewer)
 import(dplyr)
+import(ggrepel)
 import(openxlsx)
 import(tidyverse)
