@@ -1,11 +1,51 @@
 ```{r}
 library(DESeq2)
 library(tidyverse)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(biomaRt)
+```
+
+```{r}
+#this function needs to be generalized. How? Need to take a page out of the clusterprofiler
+mmu_entrezid_to_genename <- function(entrez_vector) {
+  #requires both of these packages to run
+  #require("biomaRt")
+  #require("org.Mmu.eg.db")
+  #connect to the Ensembl database for Mmu
+  ensembl = useMart("ensembl", dataset = "mmusculus_gene_ensembl")
+  #getting the corresponding Entrez Gene IDs
+  entrezid_genename_df <- getBM(attributes = c("entrezgene_id", "external_gene_name"), filters = "entrezgene_id", values = entrez_vector, mart = ensembl)
+  #return both the df and the vector
+  return(entrezid_genename_df)
+}
+```
+
+```{r}
+##' @param
+##' @param OrgDb OrgDb
+##' @import biomaRt
+# common example datasets: "hsapiens_gene_ensembl", "mmusculus_gene_ensembl"
+#connects to the ensembledb, grabs and returns
+#arguments: an entrez id vector, and the name of ensembldataset
+#It would be wise to load in your chosen OrgDb set before running this code
+
+
+entrezid_to_genename <-function(entrez_vector,
+                                ensembl_dataset = "hsapiens_gene_ensembl"){
+                          #connect to the Ensembl database for Mmu
+                          ensembl = useMart("ensembl", dataset = ensembl_dataset)
+                          #getting the corresponding Entrez Gene IDs
+                          entrezid_genename_df <- getBM(attributes = c("entrezgene_id", "external_gene_name"), filters = "entrezgene_id", values = entrez_vector, mart = ensembl)
+    return(entrezid_genename_df)
+}
 ```
 
 Input should be unormalized data counts
 
 Data Source : <https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE60424>
+
+Importing Meta Data cats()
 
 ```{r}
 conditions <- c(
@@ -34,6 +74,14 @@ conditions <- c(
   "ALS", "ALS", "ALS", "ALS", "ALS"
 )
 ```
+
+Importing Raw Counts Data
+
+User must assemble the following pieces of data before using the functions in this package:
+
+1: They must have pre-processed RNa-Seq in a raw un-normalized count matrix and ChIP-Seq data in the Annotated Peak Call Form
+
+2: They must have meta data which is equal in length to the sample name vector (Use will probably have to search.
 
 ```{r}
 #load in r
@@ -70,30 +118,13 @@ results_frame <- as.data.frame(results_table)
 results_frame
 ```
 
-Zeroth Function –\> Chip_seq and RNA_seq Merger (Requirements: same experiment/organism and annotations)
+Zeroth Function Chip_seq and RNA_seq Merger (Requirements: same experiment/organism and annotations)
 
 First Function: deseq filtration
 
 step 1, applying pvalue arguments
 
 provisional function data to txt
-
-```{r}
-df_to_txt <- function(tibble) {
-  
-  tibble_name <- deparse(substitute(tibble))
-  
-  file_name <- paste(getwd(),"/",tibble_name,".txt")
-  
-  file_mod <- gsub("\\s", "", file_name)
-  #\\s is a regular expression pattern that matches any white space character
-  #gsub replaces all occurance of this pattern with an empty string
-  save_fxn <- write_delim(tibble, file = file_mod, delim = "\t", col_names = FALSE)
-  
-  return(save_fxn)
-}
-  #there has to be a return value
-```
 
 ```{r}
 deseq_filteration <- function(tibble, 
@@ -223,13 +254,117 @@ object2 <- deseq_filteration(tibble =  results_frame, file_name = "test1_2", pva
 ```
 
 ```{r}
-object2$tibble_exp
+genes <- object2$tibble_exp %>% rownames()
+genes
 ```
 
-DAVID Annotation Function FUN FUN FUN
+```{r}
+object1 <- deseq_filteration(tibble =  results_frame, file_name = "test1_2", pval_cutoff = 0.01, rev = FALSE)
+object1 <- object1$tibble_exp %>% tibble::rownames_to_column("entrezgene_id")
+object1
+```
+
+We can't find the DAVID annotatiion stuff I have to use clusterProfiler
+
+```{r}
+genes <- object1$entrezgene_id
+```
+
+```{r}
+key <- enrichGO(
+  genes,                    
+  "org.Hs.eg.db",           
+  ont = "BP",                
+  pvalueCutoff = 0.05,      
+  pAdjustMethod = "BH"      
+)
+```
+
+Unpacking the Gene IDs
+
+```{r}
+key@result
+```
 
 ```{r}
 
+##' @import biomaRt
+# common example datasets: "hsapiens_gene_ensembl", "mmusculus_gene_ensembl"
+#connects to the ensembledb, grabs and returns
+#arguments: an entrez id vector, and the name of ensembldataset
+#It would be wise to load in your chosen OrgDb set before running this code
+
+
+entrezid_to_genename <-function(entrez_vector,
+                                ensembl_dataset = "hsapiens_gene_ensembl"){
+                          #connect to the Ensembl database for Mmu
+                          ensembl = useMart("ensembl", dataset = ensembl_dataset)
+                          #getting the corresponding Entrez Gene IDs
+                          entrezid_genename_df <- getBM(attributes = c("entrezgene_id", "external_gene_name"), filters = "entrezgene_id", values = entrez_vector, mart = ensembl)
+    return(entrezid_genename_df)
+}
+```
+
+enrichgo_unpack
+
+```{r}
+deseq2_table <- object1
+enrichgo_result <- key@result
+chosen_desc <- "cellular response to copper ion"
+ensemble_dataset <- "hsapiens_gene_ensembl"
+
+enrichgo_unpack <- function(deseq2_table, enrichgo_result, chosen_desc, ensembl_dataset){
+    ###Extracting a specific gene into a cluster
+    
+    cluster <- tibble(key@result) %>%
+      filter(str_detect(Description, chosen_desc)) %>%
+      mutate(Description = as.character(Description))
+    cluster
+    
+    ###creates a helper function to unlist and strsplits the enriched Gene IDs per term
+    
+    convert_to_integer <- function(str) {
+      bruh <- as.integer(unlist(strsplit(str, "/")))
+      return(bruh)
+    }
+    
+    #apply this function to the geneID column
+    extract_result <- lapply(cluster$geneID, convert_to_integer)
+    #Next check the length of the new vector to see if it matches the Count column in the GSEA DF.
+    length(extract_result[[1]])
+    
+    #create an empty vector
+    path_vector <- c()
+    #for each index in the first column of numbers
+    for (i in 1) {
+      #replicate the name of the Description for the length of the GO term in column 1
+      path_vector <- c(path_vector, rep(cluster$Description[i], length(cluster[[i]])))
+    }
+    
+    # make new tibble that pairs the name of the Pathway from the GOTerm and enriched Entrez ID from the "post-processed" GeneID column
+    pathway_tibble <- tibble(gene_desc = path_vector, entrezgene_id = unlist(extract_result))
+    pathway_tibble
+    
+    pathway_genenames <- entrezid_to_genename(pathway_tibble$entrezgene_id, ensembl_dataset = ensemble_dataset) 
+    
+    
+    
+    final_path_tibble <- inner_join(pathway_tibble, pathway_genenames, by = "entrezgene_id")
+    final_path_tibble <- final_path_tibble %>% mutate(entrezgene_id = as.character(entrezgene_id))
+    final_path_tibble
+    
+    final_path_fc_tibble <- inner_join(final_path_tibble, deseq2_table, by = "entrezgene_id")
+    final_path_fc_tibble
+    return(final_path_fc_tibble)
+}
+```
+
+```{r}
+enrichgo_result <- key@result
+chosen_desc <- "stress response to metal ion"
+ensemble_dataset <- "hsapiens_gene_ensembl"
+deseq2_table <- object1
+enrichgo_unpack  <- enrichgo_unpack(deseq2_table, enrichgo_result, chosen_desc, ensemble_dataset)
 ```
 
 Visual Functions: Must be used after DAVID_Annotation Function
@@ -254,14 +389,14 @@ Required columns: GSEA pvalue, GSEA Term, GSEA Count column
 gsea_dotplot <- function(gsea_results, gspval_cutoff, org_by, num_disp, graph_title, file_name){
   if(org_by %in% 'Count'){
     #inside if
-    dotplot1 <- gsea_resuts%>%
+    dotplot <- gsea_results%>%
                 arrange(desc(Count))%>%
                 head(num_disp)%>%
-                mutate(as.factor(Term))%>%
+                mutate(as.factor(Description))%>%
                 ggplot() +
-                aes(y = Count, x = fct_reorder(Term, Count), fill = pvalue) +
-                scale_fill_gradient(low = "red", high = "blue") +
-                geom_col(color = "black") +
+                aes(y = Count, x = fct_reorder(Description, Count)) +
+                scale_colour_gradient(low = "red", high = "blue") +
+                geom_point(aes(size = GeneRatio, color = pvalue)) +
                 labs(title = graph_title, x = "Enriched Term", y = "Gene Count") +
                 coord_flip() +
                 theme(text = element_text(face = "bold") , plot.title = element_text(hjust = 1))
@@ -269,15 +404,15 @@ gsea_dotplot <- function(gsea_results, gspval_cutoff, org_by, num_disp, graph_ti
   }
   if(org_by %in% 'pvalue'){
     #inside if
-    dotplot2 <- gsea_resuts %>%
+    dotplot <- gsea_results %>%
                 filter(pvalue < gspval_cutoff) %>%
                 head(num_disp) %>%
-                mutate(as.factor(Term)) %>%
+                mutate(as.factor(Description)) %>%
                 mutate(pvalue = -1 * log(pvalue)) %>%
                 ggplot() +
-                aes(x = pvalue, y = fct_reorder(Term, pvalue), fill = Count) +
-                scale_fill_gradient(low = "red", high = "blue") +
-                geom_col(color = "black") +
+                aes(x = pvalue, y = fct_reorder(Description, pvalue))+
+                scale_colour_gradient(low = "red", high = "blue") +
+                geom_point(aes(size = GeneRatio, color = Count)) +
                 labs(title = graph_title, x = "-log10(P)", y = "Enriched Term") +
                 theme(text = element_text(face = "bold"), plot.title = element_text(hjust = 1))
   
@@ -285,6 +420,16 @@ gsea_dotplot <- function(gsea_results, gspval_cutoff, org_by, num_disp, graph_ti
   }
   return(list(dotplot, ggsave(file_name, device = "png", width = 8, height = 6, units = "in")))
 }
+```
+
+```{r}
+enrichgo_result <- key@result
+gsea_dotplot(enrichgo_result, 0.05, 'pvalue', 10, "graph_title", "file_name")
+```
+
+```{r}
+enrichgo_result <- key@result
+enrichgo_result
 ```
 
 Fxn: Volcano Plot
@@ -297,64 +442,25 @@ Required data:
 ```
 
 ```{r}
-
-#setting the color
-gsea_results$color <- ifelse(gsea_results$FinalFC > 2, "Upregulated",  "Downregulated")
-
-#arrange by padj, may give that option to the user
-#the idea is that we are using DAVID so that means we some strict
-#It looks like this function is under the assumption that annotation
-gsea_results <- gsea_results %>%
-  arrange(padj) %>%
-  mutate(delabel = ifelse(row_number() <= 10, as.character(gene_id_v1.2), ""))
-
-
-ggplot(gsea_results) +
-  aes(x = FinalFC, y = -log10(pvalue), color = color, label = delabel) +
-  
-  
-  geom_vline(xintercept = c(-0.6, 0.6), col = "gray", linetype = 'dashed') +
-  
-  geom_hline(yintercept = -log10(0.05), col = "gray", linetype = 'dashed') + 
-  
-  theme_set(theme_classic(base_size = 12) +
-              
-  theme(
-  axis.title.y = element_text(margin = margin(0,20,0,0), size = rel(1.1), color = 'black'),
-  
-  axis.title.x = element_text(hjust = 0.5, margin = margin(20,0,0,0), size = rel(1.1), color = 'black'),
-
-  plot.title = element_text(hjust = 0.5)
-            )) +
-  
-  geom_point(size = 2) +
-  
-  scale_color_manual(values = c("Upregulated" = "red", "Downregulated" = "blue")) +
-  
-  geom_text(nudge_y = 0.5, check_overlap = TRUE) +
-  
-  geom_text_repel(max.overlaps = Inf) +
-  coord_cartesian(xlim = c(-30, 30)) +
-  scale_x_continuous(breaks = seq(-30, 30, 5))
-)
-  
+gsea_results <- enrichgo_unpack
 ```
 
 ```{r}
 gsea_volplot <- function(gsea_results){
        #setting the color
-    gsea_results$color <- ifelse(gsea_results$FinalFC > 2, "Upregulated",  "Downregulated")
+      
+    gsea_results$color <- ifelse(gsea_results$log2FoldChange > 0, "Upregulated",  "Downregulated")
     
     #arrange by padj, may give that option to the user
     #the idea is that we are using DAVID so that means we some strict
     #It looks like this function is under the assumption that annotation
     gsea_results <- gsea_results %>%
       arrange(padj) %>%
-      mutate(delabel = ifelse(row_number() <= 10, as.character(gene_id_v1.2), ""))
+      mutate(delabel = ifelse(row_number() <= 10, as.character(external_gene_name), ""))
     
     
-    ggplot(gsea_results) +
-      aes(x = FinalFC, y = -log10(pvalue), color = color, label = delabel) +
+    volplot <- ggplot(gsea_results) +
+      aes(x = log2FoldChange, y = -log10(pvalue), color = color, label = delabel) +
       
       
       geom_vline(xintercept = c(-0.6, 0.6), col = "gray", linetype = 'dashed') +
@@ -379,7 +485,12 @@ gsea_volplot <- function(gsea_results){
       
       geom_text_repel(max.overlaps = Inf) +
       coord_cartesian(xlim = c(-30, 30)) +
-      scale_x_continuous(breaks = seq(-30, 30, 5)) 
-  return(gsea_results)
+      scale_x_continuous(breaks = seq(-30, 30, 5))
+    
+  return(list(volplot, gsea_results))
 }
+```
+
+```{r}
+gsea_volplot(gsea_results)
 ```

@@ -5,8 +5,7 @@
 #' GSEA pvalue filter
 #' graph title (title)
 #' file_name write out
-#' output visual dotplot of GSEA enrichment
-#' input post GSEA
+#' output visual dotp
 
 
 #' @export
@@ -17,31 +16,31 @@
 
 gsea_dotplot <- function(gsea_results, gspval_cutoff, org_by, num_disp, graph_title, file_name){
   if(org_by %in% 'Count'){
-
-    dotplot1 <- gsea_resuts%>%
+    #inside if
+    dotplot <- gsea_results%>%
       arrange(desc(Count))%>%
       head(num_disp)%>%
-      mutate(as.factor(Term))%>%
+      mutate(as.factor(Description))%>%
       ggplot() +
-      aes(y = Count, x = fct_reorder(Term, Count), fill = pvalue) +
-      scale_fill_gradient(low = "red", high = "blue") +
-      geom_col(color = "black") +
+      aes(y = Count, x = fct_reorder(Description, Count)) +
+      scale_colour_gradient(low = "red", high = "blue") +
+      geom_point(aes(size = GeneRatio, color = pvalue)) +
       labs(title = graph_title, x = "Enriched Term", y = "Gene Count") +
       coord_flip() +
       theme(text = element_text(face = "bold") , plot.title = element_text(hjust = 1))
 
   }
   if(org_by %in% 'pvalue'){
-
-    dotplot2 <- gsea_resuts %>%
+    #inside if
+    dotplot <- gsea_results %>%
       filter(pvalue < gspval_cutoff) %>%
       head(num_disp) %>%
-      mutate(as.factor(Term)) %>%
+      mutate(as.factor(Description)) %>%
       mutate(pvalue = -1 * log(pvalue)) %>%
       ggplot() +
-      aes(x = pvalue, y = fct_reorder(Term, pvalue), fill = Count) +
-      scale_fill_gradient(low = "red", high = "blue") +
-      geom_col(color = "black") +
+      aes(x = pvalue, y = fct_reorder(Description, pvalue))+
+      scale_colour_gradient(low = "red", high = "blue") +
+      geom_point(aes(size = GeneRatio, color = Count)) +
       labs(title = graph_title, x = "-log10(P)", y = "Enriched Term") +
       theme(text = element_text(face = "bold"), plot.title = element_text(hjust = 1))
 
@@ -64,18 +63,19 @@ gsea_dotplot <- function(gsea_results, gspval_cutoff, org_by, num_disp, graph_ti
 
 gsea_volplot <- function(gsea_results){
   #setting the color
-  gsea_results$color <- ifelse(gsea_results$FinalFC > 2, "Upregulated",  "Downregulated")
+
+  gsea_results$color <- ifelse(gsea_results$log2FoldChange > 0, "Upregulated",  "Downregulated")
 
   #arrange by padj, may give that option to the user
   #the idea is that we are using DAVID so that means we some strict
   #It looks like this function is under the assumption that annotation
   gsea_results <- gsea_results %>%
     arrange(padj) %>%
-    mutate(delabel = ifelse(row_number() <= 10, as.character(gene_id_v1.2), ""))
+    mutate(delabel = ifelse(row_number() <= 10, as.character(external_gene_name), ""))
 
 
-  ggplot(gsea_results) +
-    aes(x = FinalFC, y = -log10(pvalue), color = color, label = delabel) +
+  volplot <- ggplot(gsea_results) +
+    aes(x = log2FoldChange, y = -log10(pvalue), color = color, label = delabel) +
 
 
     geom_vline(xintercept = c(-0.6, 0.6), col = "gray", linetype = 'dashed') +
@@ -101,6 +101,6 @@ gsea_volplot <- function(gsea_results){
     geom_text_repel(max.overlaps = Inf) +
     coord_cartesian(xlim = c(-30, 30)) +
     scale_x_continuous(breaks = seq(-30, 30, 5))
-  return(gsea_results)
-}
 
+  return(list(volplot, gsea_results))
+}

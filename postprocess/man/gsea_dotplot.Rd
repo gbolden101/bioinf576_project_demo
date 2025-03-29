@@ -9,8 +9,7 @@ num_disp
 GSEA pvalue filter
 graph title (title)
 file_name write out
-output visual dotplot of GSEA enrichment
-input post GSEA}
+output visual dotp}
 \usage{
 gsea_dotplot(
   gsea_results,
@@ -29,6 +28,5 @@ num_disp
 GSEA pvalue filter
 graph title (title)
 file_name write out
-output visual dotplot of GSEA enrichment
-input post GSEA
+output visual dotp
 }
