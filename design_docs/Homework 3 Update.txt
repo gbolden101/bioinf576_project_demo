@@ -1,0 +1,9 @@
+To do list
+1. Create demo for all packages
+	-Snakemake chip
+	-Snakemake rnaseq
+	-Post-process R package
+	-Motiff Finding Packages
+2. Create Tutorial
+
+3. Create R Vignettes
