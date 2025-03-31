@@ -27,3 +27,5 @@ Purpose: Referance file used to alignment and possibly motiff finding for TFs.
 Genetic Simulation Data will be required the development stage
 https://surveillance.cancer.gov/genetic-simulation-resources/
 
+New Toy Data:
+Used NCBI data to test Deseq2 functions.
