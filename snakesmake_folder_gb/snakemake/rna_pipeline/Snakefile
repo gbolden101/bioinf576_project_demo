@@ -1,0 +1,96 @@
+SAMPLES = glob_wildcards("../data/paired_dat{sample}.fq").sample
+
+rule all:
+    input:
+        expand("../rna_output/rna_cutadapt/cut_{sample}.1.fastq", sample=SAMPLES),
+        expand("../rna_output/rna_cutadapt/cut_{sample}.2.fastq", sample=SAMPLES),
+        "../rna_output/star_index/STARindex.done",
+        expand("../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
+        expand("../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam.bai", sample=SAMPLES),
+        expand("../rna_output/featurecounts/merged_counts.txt")
+
+rule cutadapt:
+    input:
+        r1 = "../data/paired_dat1.fq",
+        r2 = "../data/paired_dat2.fq"
+    output:
+        r1 = "../rna_output/rna_cutadapt/cut_{sample}.1.fastq",
+        r2 = "../rna_output/rna_cutadapt/cut_{sample}.2.fastq"
+    shell:
+        """
+        mkdir -p ../rna_output &&
+        mkdir -p ../rna_output/rna_cutadapt &&
+        cutadapt -q 5 -Q 15,20 -o {output.r1} -p {output.r2} {input.r1} {input.r2}
+        """
+
+rule index_star:
+    input:
+        ref="../sim_data/inputs/chr1_10M.fa",
+        gtf="../sim_data/inputs/chr1_mm10_trimmed.gtf"
+    output:
+        done_flag= "../rna_output/star_index/STARindex.done",
+#this file is used as a dummy flag for the
+        index_dir = directory("../rna_output/star_index")
+    threads: 16
+    shell:
+        """
+        mkdir -p ../rna_output/star_index &&
+        STAR --runThreadN {threads} \
+        --runMode genomeGenerate \
+        --genomeSAindexNbases 10 \
+        --genomeDir {output.index_dir} \
+        --genomeFastaFiles {input.ref} \
+        --sjdbGTFfile {input.gtf} &&
+        touch {output.done_flag}
+        """
+        
+rule star_align:
+    input:
+        r1 = "../rna_output/rna_cutadapt/cut_{sample}.1.fastq",
+        r2 = "../rna_output/rna_cutadapt/cut_{sample}.2.fastq"
+    output:
+        bam = "../rna_output/star_aligned/{sample}.bam"
+    log:
+        "../rna_output/star_aligned/logs/{sample}.log"
+    threads: 8
+    shell:
+        """
+        mkdir -p ../rna_output/star_aligned/logs
+
+        STAR --runThreadN {threads} \
+             --genomeDir ../rna_output/star_index \
+             --readFilesIn {input.r1} {input.r2} \
+             --outFileNamePrefix ../rna_output/star_aligned/{wildcards.sample}. \
+             --outSAMtype BAM SortedByCoordinate \
+             --outSAMunmapped Within \
+             --outSAMattributes Standard \
+             > {log} 2>&1
+
+        mv ../rna_output/star_aligned/{wildcards.sample}.Aligned.sortedByCoord.out.bam {output.bam}
+        """
+#need to combine with htseq later --> baby steps
+rule index_bam:
+    input:
+        bam = "../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam"
+    output:
+        bai = "../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam.bai"
+    shell:
+        """
+        samtools index {input.bam}
+        """
+rule featurecounts:
+    input:
+        bam = expand("../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES)
+    output:
+        counts="../rna_output/featurecounts/merged_counts.txt"
+    params:
+        gtf="../sim_data/inputs/chr1_mm10_trimmed.gtf"
+    shell:
+        """
+        mkdir -p ../rna_output/featurecounts &&
+        featureCounts -p --countReadPairs \
+                    -t exon -g gene_id \
+                    -a {params.gtf} \
+                    -o {output.counts} {input.bam}
+        """
+        

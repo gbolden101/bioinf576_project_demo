@@ -4,11 +4,16 @@ channels:
   - conda-forge
   - bioconda
   - defaults
-  - Bioinformatics
 dependencies:
   - snakemake-minimal=7.24.0  # Updated version for better compatibility
+  - python=3.7
   - fastqc=0.11.9
   - cutadapt=3.5
   - star=2.7.6
   - samtools=1.16.1
-  - r-base=4.4.0
+  - hisat2=2.2.0
+  - htseq=2.0.2
+  - subread
+  - numpy
+  - pandas
+  - r-base=4.2
