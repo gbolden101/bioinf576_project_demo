@@ -8,7 +8,7 @@ Tet2 has distinct catalytic and noncatalytic target genes in ESCs based on the h
 
 
 
-RNA-Seq Datasets
+RNA-Seq Datasets Total: 8Gb
 Tet2_wildtype_RNAseq_rep1, GSM6585594, SAMN30862176 (Paired-End)
 wget s3://sra-pub-src-13/SRR21586232/Tet2_wildtype_RNAseq_rep1_2.fq.gz.1
 wget s3://sra-pub-src-13/SRR21586232/Tet2_wildtype_RNAseq_rep1_1.fq.gz.1
@@ -19,7 +19,9 @@ wget s3://sra-pub-src-12/SRR21586226/Tet2_knockout_RNAseq_rep1_2.fq.gz.1
 wget s3://sra-pub-src-16/SRR21586226/Tet2_knockout_RNAseq_rep1_1.fq.gz.1	
 
 
-ChIP-Seq DatasetsTet2_wildtype_H3K27ac_CUTnTag,SAMN30862166, SRR21586222 (Paired-End)
+ChIP-Seq Datasets Total: 6.6Gb
+
+Tet2_wildtype_H3K27ac_CUTnTag,SAMN30862166, SRR21586222 (Paired-End)
 wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR21586222/SRR21586222
 
 Tet2_knockout_H3K27ac_CUTnTag, SAMN30862164, SRR21586220, (Paired-End)
