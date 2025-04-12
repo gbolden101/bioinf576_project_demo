@@ -1,66 +1,79 @@
 #BIG NOTE, RULE ALL HAS TO UPDATED WITH THE MOST RECENT OUTPUT TO WORK
 #This pipeline only works for single end reads right now?
-import yaml
-import subprocess
-subprocess.run(["python", "sim_real_reads.py"], check = True)
-
-
-configfile: "config_reads.yaml"
-
-REAL_SAMPLES = config["real_reads"]
-SIM_SAMPLES = config["sim_reads"]
-
-print("Real Samples:", REAL_SAMPLES[:10])
-print("Simulated samples:", SIM_SAMPLES)
 
 
 
-#rule all defines the ultimate output of the 
+import os
+from glob import glob
+
+# Identify Paired-end prefixes explicitly from *_1.fastq files
+PAIRED_PREFIXES = [
+    os.path.basename(f).replace("_1.fastq", "")
+    for f in glob("../data/chip_data/*_1.fastq")
+]
+
 rule all:
     input:
-        "../chip_output/mac2_output/ann_peaks.txt"
-
-
-
-def get_cut_input(wildcards):
-        if wildcards.sample in SIM_SAMPLES:
+        #chip_cutadpat
+        expand("../chip_output/chip_cutadapt/{prefix}_1.trimmed.fastq", prefix=PAIRED_PREFIXES),
+        expand("../chip_output/chip_cutadapt/{prefix}_2.trimmed.fastq", prefix=PAIRED_PREFIXES),
         
-            return f"../chip_output/chip_reads/{wildcards.sample}.fastq"
-        else:
-            return f"../chip_output/chip_cutadapt/cut_{wildcards.sample}.fastq"
-
-
-rule cutadapt:
+        #fastqc output
+        expand("../chip_output/fastqc/{prefix}_1.trimmed_fastqc.html", prefix=PAIRED_PREFIXES),
+        expand("../chip_output/fastqc/{prefix}_2.trimmed_fastqc.html", prefix=PAIRED_PREFIXES),
+        
+        #bowtie2_output
+        expand("../chip_output/aligned_chip_reads/{prefix}.sam", prefix=PAIRED_PREFIXES),
+        
+        #sam_tpo_bam
+        expand("../chip_output/sorted_bam/{prefix}_sorted.bam",prefix=PAIRED_PREFIXES),
+        expand("../chip_output/sorted_bam/{prefix}_sorted.bam.bai",prefix=PAIRED_PREFIXES),
+        expand("../chip_output/sorted_bam/{prefix}_sorted_deduplicated.bam", prefix=PAIRED_PREFIXES),
+        
+        #Peak_calling
+        expand("../chip_output/macs2_output/{prefix}_summits.bed", prefix=PAIRED_PREFIXES),
+        expand("../chip_output/macs2_output/{prefix}_peaks.narrowPeak", prefix=PAIRED_PREFIXES),
+        
+        #peak_calling
+        expand("../chip_output/macs2_output/{prefix}_ann_peaks.txt", prefix=PAIRED_PREFIXES)
+        
+        
+rule cutadapt_paired:
     input:
-        "../data/{sample}.fastq"
+        r1="../data/chip_data/{prefix}_1.fastq",
+        r2="../data/chip_data/{prefix}_2.fastq"
     output:
-        "../chip_output/chip_cutadapt/cut_{sample}.fastq"
+        r1_trimmed="../chip_output/chip_cutadapt/{prefix}_1.trimmed.fastq",
+        r2_trimmed="../chip_output/chip_cutadapt/{prefix}_2.trimmed.fastq"
+    threads: 8
     shell:
         """
         mkdir -p ../chip_output/chip_cutadapt &&
-        cutadapt -a AGATCGGAAGAGC -o {output} {input}
+        cutadapt -j {threads} \
+          -a AGATCGGAAGAGC \
+          -A AGATCGGAAGAGC \
+          -o {output.r1_trimmed} \
+          -p {output.r2_trimmed} \
+          {input.r1} {input.r2}
         """
-            
-
-#connect chain cutadapt ---> fastqc
-#seperate depedancies
-
-rule fastqc:
-        input:
-            lambda wildcards: get_cut_input(wildcards)
-            # wildcards are only available when Snakemake exectus a rule
-            #When parsing the object wildcards doe snot exist yet
-            #lamda essentially delays the function fun until the rule cutadapt has been exectuted
-            
-        output:
-            "../chip_output/chip_fastqc_results/sim_reads_fastqc.html",
-            "../chip_output/chip_fastqc_results/sim_reads_fastqc.zip"
         
-        threads: 4
+rule fastqc_paired:
+    input:
+        r1_trimmed="../chip_output/chip_cutadapt/{prefix}_1.trimmed.fastq",
+        r2_trimmed="../chip_output/chip_cutadapt/{prefix}_2.trimmed.fastq"
+    output:
+        r1_html="../chip_output/fastqc/{prefix}_1.trimmed_fastqc.html",
+        r1_zip="../chip_output/fastqc/{prefix}_1.trimmed_fastqc.zip",
+        r2_html="../chip_output/fastqc/{prefix}_2.trimmed_fastqc.html",
+        r2_zip="../chip_output/fastqc/{prefix}_2.trimmed_fastqc.zip"
+    threads: 8
+    shell:
+        """
+        mkdir -p ../chip_output/fastqc &&
+        fastqc -t {threads} -o ../chip_output/fastqc {input.r1_trimmed} {input.r2_trimmed}
+        """        
         
-        shell:
-            "mkdir -p ../chip_output/chip_fastqc_results && fastqc --outdir ../chip_output/chip_fastqc_results -t {threads} {input} - > {output}"
- 
+        
 #BIG NOTE ONCE FINISHED THIS WILL HAVE TO BE UPDATED FOR LARGER FILES           
 
 
@@ -78,60 +91,121 @@ rule fastqc:
 #Personal Note. Very interesting to learn more about the python/snakemake interactions
 
 
-rule bowtie2_alignment:
-        input:
-            fastq= "../data/sim_reads.fastq",
-            reference="../sim_data/inputs/chr1_limit.fa"
-        
-        output:
-            "../chip_output/aligned_chip_reads/chip_alignments.sam"
-    
-        shell:
-            """
-            mkdir -p ../chip_output/aligned_chip_reads &&
-            bowtie2-build ../sim_data/inputs/chr1_limit.fa ../chip_output/aligned_chip_reads/chr1_limit &&
-            bowtie2 -x ../chip_output/aligned_chip_reads/chr1_limit -q -U {input.fastq} -S {output} --local -p 8
-            """
+rule bowtie2_alignment_paired:
+    input:
+        r1="../chip_output/chip_cutadapt/{prefix}_1.trimmed.fastq",
+        r2="../chip_output/chip_cutadapt/{prefix}_2.trimmed.fastq"
+    output:
+        "../chip_output/aligned_chip_reads/{prefix}.sam"
+    threads: 32
+    params:
+        ref_dir="../data/chip_data",
+        ref_fa="../data/chip_data/mm10.fa",
+        ref_url="https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.fa.gz",
+        index="../chip_output/aligned_chip_reads/mm10_index"
+    shell:
+        """
+        mkdir -p {params.ref_dir} &&
+        mkdir -p ../chip_output/aligned_chip_reads &&
+
+        # Download and decompress mm10 reference
+        wget -O {params.ref_fa}.gz {params.ref_url} &&
+        gunzip -c {params.ref_fa}.gz > {params.ref_fa} &&
+
+        # Index reference with bowtie2-build
+        bowtie2-build --threads {threads} {params.ref_fa} {params.index} &&
+
+        # Run bowtie2 paired-end alignment
+        bowtie2 -x {params.index} \
+            -1 {input.r1} -2 {input.r2} \
+            -S {output} --local -p {threads} &&
+
+        # Cleanup reference files after indexing
+        rm {params.ref_fa}.gz {params.ref_fa}
+        """
+            
+            
 # SAM --(SAMtools view)--> BAM --(SAMtools sort)--> Sorted BAM --(SAMtools rmdup)--> Deduplicated BAM
 
-rule prepsam_deduplicate:
-        input:
-            sam="../chip_output/aligned_chip_reads/chip_alignments.sam"
-             
-        output:
-            sorted_bam="../chip_output/sorted_bam/chip_sorted.bam",
-            deduplicated_bam="../chip_output/sorted_bam/chip_sorted_deduplicated.bam"
-            
-        shell:
-            """
-            mkdir -p ../chip_output/sorted_bam &&
-            samtools view -b -S {input.sam} | samtools sort -o {output.sorted_bam} &&
-            samtools index {output.sorted_bam} | samtools markdup -r {output.sorted_bam} {output.deduplicated_bam}
-            """
+rule prepsam_deduplicate_paired:
+    input:
+        sam="../chip_output/aligned_chip_reads/{prefix}.sam"
+    output:
+        intermediate_bam = temp("../chip_output/sorted_bam/{prefix}_fixmate_unsorted.bam"),
+        sorted_bam="../chip_output/sorted_bam/{prefix}_sorted.bam",
+        sorted_bam_index="../chip_output/sorted_bam/{prefix}_sorted.bam.bai",
+        deduplicated_bam="../chip_output/sorted_bam/{prefix}_sorted_deduplicated.bam"
+    threads: 16
+    shell:
+        """
+        mkdir -p ../chip_output/sorted_bam &&
+
+        # Step 1: Convert SAM to BAM
+        samtools view -@ {threads} -bS {input.sam} > {wildcards.prefix}.unsorted.bam &&
+
+        # Step 2: Add mate info (MC tag)
+        samtools fixmate -m -@ {threads} {wildcards.prefix}.unsorted.bam {output.intermediate_bam} &&
+
+        # Step 3: Sort fixed BAM
+        samtools sort -@ {threads} -o {output.sorted_bam} {output.intermediate_bam} &&
+
+        # Step 4: Index sorted BAM
+        samtools index {output.sorted_bam} &&
+
+        # Step 5: Remove duplicates
+        samtools markdup -@ {threads} -r {output.sorted_bam} {output.deduplicated_bam} &&
+
+        # Cleanup
+        rm -f {wildcards.prefix}.unsorted.bam
+        """
+
 #set a condition later on where there is a condition and if there is no condition for now we have to just get it done
 #
 rule peak_call:
-        input:
-            deduplicated_bam="../chip_output/sorted_bam/chip_sorted_deduplicated.bam"
-            
-        output:
-            summits="../chip_output/macs2_output/peak_call_summits.bed"
-            
-        shell:
-            """
-            mkdir -p ../chip_output/macs2_output &&
-            macs2 callpeak -t {input.deduplicated_bam} -f BAM -n peak_call --outdir ../chip_output/macs2_output --nomodel
-            """
+    input:
+        deduplicated_bam="../chip_output/sorted_bam/{prefix}_sorted_deduplicated.bam"
+    output:
+        summits="../chip_output/macs2_output/{prefix}_summits.bed",
+        peaks="../chip_output/macs2_output/{prefix}_peaks.narrowPeak"
+    threads: 8
+    shell:
+        """
+        mkdir -p ../chip_output/macs2_output &&
+        macs2 callpeak \
+            -t {input.deduplicated_bam} \
+            -f BAM \
+            -n {wildcards.prefix} \
+            --outdir ../chip_output/macs2_output \
+            --nomodel \
+            --call-summits \
+            -g mm \
+            --keep-dup all
+        """
 
 # HOMER/ChIPseeker
 #input files needed: mm10_chr1.gtf, chr1_limit.fa, peak_call_file.bed
-rule homer:
-        input:
-            summits="../chip_output/macs2_output/peak_call_summits.bed",
-            gtf="../sim_data/inputs/chr1_mm10_ncbirefseq.gtf"
-        output:
-            ann_peaks="../chip_output/mac2_output/ann_peaks.txt"
-        shell:
-            """
-            annotatePeaks.pl {input.summits} mm10 -gtf {input.gtf} > {output.ann_peaks}
-            """
+rule homer_annotation:
+    input:
+        summits="../chip_output/macs2_output/{prefix}_summits.bed"
+    output:
+        ann_peaks="../chip_output/macs2_output/{prefix}_ann_peaks.txt"
+    params:
+        gtf_url="https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/genes/mm10.ncbiRefSeq.gtf.gz",
+        gtf_gz="../chip_output/tmp/mm10.ncbiRefSeq.gtf.gz",
+        gtf="../chip_output/tmp/mm10.ncbiRefSeq.gtf"
+    shell:
+        """
+        mkdir -p ../chip_output/tmp &&
+        mkdir -p ../chip_output/macs2_output &&
+
+        # Download and decompress GTF
+        wget -O {params.gtf_gz} {params.gtf_url} &&
+        gunzip -c {params.gtf_gz} > {params.gtf} &&
+
+        # Run HOMER annotation
+        annotatePeaks.pl {input.summits} mm10 -gtf {params.gtf} > {output.ann_peaks} &&
+
+        # Cleanup GTF and temp directory
+        rm -f {params.gtf} {params.gtf_gz} &&
+        rmdir --ignore-fail-on-non-empty ../chip_output/tmp
+        """

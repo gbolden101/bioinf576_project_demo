@@ -1,8 +1,8 @@
-Package: post-process
+Package: postprocess
 Title: Post Process Analysis of RNA-Seq/ChIP-Seq: Common Practices
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
+    person("Geordan", "Bolden", , "gbolden101@gmail.com.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
@@ -14,3 +14,7 @@ Import:
   dplyr,
   openxlsx,
   ggplot2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

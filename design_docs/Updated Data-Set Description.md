@@ -21,8 +21,12 @@ wget s3://sra-pub-src-16/SRR21586226/Tet2_knockout_RNAseq_rep1_1.fq.gz.1
 
 ChIP-Seq DatasetsTet2_wildtype_H3K27ac_CUTnTag,SAMN30862166, SRR21586222 (Paired-End)
 wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR21586222/SRR21586222
+~3.3Gb
+
 
 Tet2_knockout_H3K27ac_CUTnTag, SAMN30862164, SRR21586220, (Paired-End)
 wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR21586220/SRR21586220
+~3.3Gb
+
 
 use sra-toolskits to unpack the fastqc files

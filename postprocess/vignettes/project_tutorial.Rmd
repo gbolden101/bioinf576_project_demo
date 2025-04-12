@@ -1,0 +1,450 @@
+---
+title: "project_tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{project_tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+Hello. A lot of development is currently underway.
+As of 4/11/2025 The following needs to get done by 4/14/2025:
+
+1. Re-Writing/Re-Directing RNA-Seq Pre-Processing Pipeline
+2. Running Real Rna-Seq data-submitted on 4/11/2025
+3. Running the Join Script on Real Data
+4. Testing MEME
+3. Docking each of these scripts
+Until then this will be majority text based guide
+
+
+## SnakeMake Pre-Processing Commands
+ 
+
+UNIX commands (Ran on the Umich Great Lakes Cluster)
+
+Before running
+Ensure your directory tree looks similar to the example below
+
+snakemake/
+├── Snakefile                      # Main workflow
+├── config/
+│   └── config.yaml                # Parameters, sample info, etc.
+├── envs/
+│   └── chip_pipeline.yaml        # Conda environments
+├── scripts/
+│   ├── custom_analysis.R         # R analysis scripts
+│   └── helper_functions.py       # Python helpers
+├── data/
+│   └── chip_data/
+|                           # Raw fastq files, e.g., SRRxxxx_1.fastq
+|── chip_pipleine/
+    └── SnakeFile/            #SnakeFile to be called
+    
+Repeat this structure for RNA-Seq Pre-Processing Pipeline
+
+
+You should alread have conda installed, else: https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html
+Install SnakeMake if you have not already
+# Linux
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+
+# macOS
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+bash Miniconda3-latest-MacOSX-x86_64.sh
+
+Creat a Cona Env
+conda create -n snakemake-env -c conda-forge -c bioconda snakemake
+conda activate snakemake-env
+
+
+Make your environments
+conda config --set channel_priority strict
+or that does not work channel_priority flexible
+
+
+cd to the env folder
+conda env create --name rna_pipeline --file rna_pipeline.yaml
+conda env create --name chip_pipeline --file chip_pipeline.yaml
+
+Make Sure you have the paired-end Sequences (ChIP/CUT&TAG, RNA-seq)
+into their seperate folders under ./data/chip_data, and ./data/rna_data
+
+conda activate one of the environments
+
+conda activate rna_pipeline or conda activate rna_pipeline
+### SnakeMake Commands
+
+cd to the respective pre-processing folder
+
+run using snakemake --dry-run to check the pipeline is working
+
+snakemake --cores 32 # for the real datasets
+
+As of 4/11/2025 we must use some other datasets until the real ones are ready
+
+We are using a real dataset but not the one are planning.
+
+```{r}
+library(postprocess)
+library(DESeq2)
+library(tidyverse)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(biomaRt)
+```
+
+
+Load the referance for enrichr
+```{r}
+#this function needs to be generalized. How? Need to take a page out of the clusterprofiler
+mmu_entrezid_to_genename <- function(entrez_vector) {
+  #requires both of these packages to run
+  #require("biomaRt")
+  #require("org.Mmu.eg.db")
+  #connect to the Ensembl database for Mmu
+  ensembl = useMart("ensembl", dataset = "mmusculus_gene_ensembl")
+  #getting the corresponding Entrez Gene IDs
+  entrezid_genename_df <- getBM(attributes = c("entrezgene_id", "external_gene_name"), filters = "entrezgene_id", values = entrez_vector, mart = ensembl)
+  #return both the df and the vector
+  return(entrezid_genename_df)
+}
+```
+
+
+Conversion Helper Function
+```{r}
+
+# common example datasets: "hsapiens_gene_ensembl", "mmusculus_gene_ensembl"
+#connects to the ensembledb, grabs and returns
+#arguments: an entrez id vector, and the name of ensembldataset
+#It would be wise to load in your chosen OrgDb set before running this code
+
+entrezid_to_genename <-function(entrez_vector,
+                                ensembl_dataset = "hsapiens_gene_ensembl"){
+                          #connect to the Ensembl database for Mmu
+                          ensembl = useMart("ensembl", dataset = ensembl_dataset)
+                          #getting the corresponding Entrez Gene IDs
+                          entrezid_genename_df <- getBM(attributes = c("entrezgene_id", "external_gene_name"), filters = "entrezgene_id", values = entrez_vector, mart = ensembl)
+    return(entrezid_genename_df)
+}
+```
+Using example data
+Input should be unormalized data counts
+
+Data Source : https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE60424
+
+Importing Meta Data from data
+
+```{r}
+conditions <- c(
+  "Healthy Control", "MS pretreatment", "MS posttreatment", "Type 1 Diabetes", "Type 1 Diabetes",
+  "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control",
+  "Healthy Control", "MS pretreatment", "MS pretreatment", "MS pretreatment", "MS pretreatment",
+  "MS pretreatment", "MS posttreatment", "MS posttreatment", "MS posttreatment", "MS posttreatment",
+  "MS posttreatment", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes",
+  "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes",
+  "Type 1 Diabetes", "Type 1 Diabetes", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis",
+  "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis", "Sepsis",
+  "Sepsis", "Sepsis", "Sepsis", "Sepsis", "MS pretreatment", "MS pretreatment", "MS pretreatment",
+  "MS pretreatment", "MS pretreatment", "MS pretreatment", "MS pretreatment", "MS posttreatment",
+  "MS posttreatment", "MS posttreatment", "MS posttreatment", "MS posttreatment", "MS posttreatment",
+  "MS posttreatment", "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control",
+  "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control",
+  "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control",
+  "ALS", "ALS", "ALS", "ALS", "ALS", "ALS", "ALS", "Healthy Control", "Healthy Control",
+  "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control", "Healthy Control",
+  "ALS", "ALS", "ALS", "ALS", "ALS", "ALS", "ALS", "Type 1 Diabetes", "Type 1 Diabetes",
+  "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes",
+  "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes", "Type 1 Diabetes",
+  "Type 1 Diabetes", "MS pretreatment", "MS pretreatment", "MS pretreatment", "MS pretreatment",
+  "MS pretreatment", "MS pretreatment", "MS posttreatment", "MS posttreatment", "MS posttreatment",
+  "MS posttreatment", "MS posttreatment", "MS posttreatment", "MS posttreatment", "ALS", "ALS",
+  "ALS", "ALS", "ALS", "ALS", "ALS"
+)
+```
+
+Importing Raw Counts Data
+
+User must assemble the following pieces of data before using the functions in this package:
+
+1: They must have pre-processed RNa-Seq in a raw un-normalized count matrix and ChIP-Seq data in the Annotated Peak Call Form
+
+2: They must have meta data which is equal in length to the sample name vector (Use will probably have to search.
+
+
+```{r}
+#load in r
+toy_data <- read_delim("../../toy_data/GSE60424_raw_counts_GRCh38.p13_NCBI.tsv", delim = "\t")
+toy_data <- as.data.frame(toy_data)
+#Set GeneID as row names 
+counts <- column_to_rownames(toy_data, var = "GeneID")
+
+#Create metadata 
+metadata <- data.frame(condition = conditions, row.names = colnames(counts))
+```
+
+Should be converted to an Rscript from here on out
+
+Running Deseq2
+```{r}
+dds <- DESeqDataSetFromMatrix(
+  countData = counts,
+  colData = metadata,
+  design = ~ condition
+)
+dds <- DESeq(dds)
+
+normalized_counts <- counts(dds, normalized = TRUE)
+
+results_table <- results(dds)
+
+results_frame <- as.data.frame(results_table)
+```
+
+User inputs: countsData = user read in data, colData = metadata, design = conditions of each sample included.
+
+Note: Inputs: countData = user read in data
+
+
+```{r}
+results_frame <- as.data.frame(results_table)
+results_frame
+```
+
+Zeroth Function Chip_seq and RNA_seq Merger (Requirements: same experiment/organism and annotations)
+
+First Function: postprocess::deseq_filtration
+
+step 1, applying pvalue arguments
+
+provisional function data to txt
+
+
+```{r}
+deseq_filteration <- function(tibble, 
+                              file_name, 
+                              pval_cutoff, 
+                              rev = FALSE){
+#added argument: pval_cutoff, allows user to set their pvalue cutoff
+# This function takes into consideration that the Deseq2 Results where flipped
+# I'll have to make a conditional on that front
+#
+library(tidyverse)
+  
+  if(!require(openxlsx)) install.packages("openxlsx", dependencies=TRUE)
+  
+  if(!require(dplyr)) install.packages("dplyr", dependencies=TRUE)
+  
+library(dplyr)
+library(openxlsx)
+  
+wbfxn <- createWorkbook()
+
+  addWorksheet(wbfxn, paste("Initial Data", nrow(tibble)))
+  writeData(wbfxn, sheet = paste("Initial Data", nrow(tibble)) , tibble)
+
+tibble_exp <- tibble %>%
+# filter in value <=0.05
+  
+#In the past I have encountered Deseq sets wherelog2FCs where the results are flipped
+#This conditional takes that into consideration
+  {
+    if (rev) {
+      . <- mutate(., INUN_log2FC = log2FoldChange * -1)
+      . <- relocate(., INUN_log2FC, .after = 2)
+      addWorksheet(wbfxn, paste("Corrected Log2FC", nrow(.)))
+      writeData(wbfxn, sheet = paste("Corrected Log2FC", nrow(.)), .)
+    } else {
+      . <- mutate(., log2FoldChange = log2FoldChange)
+    }
+    
+  .}%>%
+  filter(pvalue < pval_cutoff) %>%
+  {
+    addWorksheet(wbfxn, paste("pvalue <=", pval_cutoff, nrow(.)))
+    writeData(wbfxn, sheet = paste("pvalue <=", pval_cutoff, nrow(.)), .)
+    
+  .}%>%
+  
+  {
+    if ("INUN_log2FC" %in% colnames(.)) {
+      mutate(., plusFC = 2^INUN_log2FC)
+    } else {
+      mutate(., plusFC = 2^log2FoldChange)
+    }
+  } %>%
+  
+  relocate(plusFC, .before = 4) %>%
+  {
+    
+addWorksheet(wbfxn, "add plusFC") 
+writeData(wbfxn,sheet = "add plusFC", .) 
+
+  .}%>%
+  
+  arrange(desc(plusFC)) %>%
+  {
+addWorksheet(wbfxn, "Sort by plusFC desc.") 
+writeData(wbfxn, sheet = "Sort by plusFC desc.", .)
+
+  .}%>%
+  
+#add a column called negFC: if a value in plusFC is less than 0.05 then convert it to
+#negFC (-1/FC) else leave the value alone by multiplying it by 1
+  mutate(negFC = if_else(plusFC < 0.5, -1/plusFC, plusFC * 1)) %>%
+  relocate(negFC, .before = 5) %>%
+  {
+addWorksheet(wbfxn, "add negFC") 
+writeData(wbfxn, sheet = "add negFC", .)
+  .}%>%
+  
+#In a new column called FC, 
+#If the values in plusFC and negativeFC match (plusFC == negFC) then copy the values that do match into the new column and convert them to the character type 
+#Else: paste both values from negFC and plusFC into the same point and seperate them by a "/" character.
+  mutate(FC = if_else(plusFC == negFC, as.character(plusFC), paste(plusFC, negFC, sep = "/"))) %>%
+  #In the new column FinalFC, If an entry has a slash charcter in the column FC, then get rid of everycharacter before the slash in each entry including the slash.
+  mutate(FinalFC = gsub(".*?/","", FC)) %>%
+  #convert the column FinalFC into a numeric type variable
+  #The goal of the FinalFC column is only keep the strongest directional fold change
+  mutate(FinalFC = as.numeric(FinalFC)) %>%
+  {
+addWorksheet(wbfxn, "add FinalFC") 
+writeData(wbfxn,sheet = "add FinalFC", .)
+
+  .}%>%
+  # exlude the following columns: plusFC, negFC, and FC
+  dplyr::select(-plusFC, -negFC, -FC) %>%
+  relocate(FinalFC, .before = 4) %>%
+  {
+addWorksheet(wbfxn, "exclude plusFC, negFC, intFC") 
+writeData(wbfxn, sheet = "exclude plusFC, negFC, intFC", .)
+
+
+  .}%>%
+  #keep genes if the FinalFC is greater than +2 or less than -2
+  filter(FinalFC > 2 | FinalFC < -2) %>%
+  #keep genes if the log2foldchange is greater than +1 or less than -1
+  filter(log2FoldChange > 1 | log2FoldChange < -1) %>%
+  {
+addWorksheet(wbfxn, "FinalFC > 2, <-2") 
+writeData(wbfxn, sheet = "FinalFC > 2, <-2", .)
+
+  .}
+    tibble_exp
+  file_path <- file.path(getwd(), paste0(file_name, ".xlsx"))
+  
+worksheetOrder(wbfxn) <- c(1:length(wbfxn$worksheets))
+saveWorkbook(wbfxn, file_path, overwrite = TRUE)
+  return(list(tibble_exp = tibble_exp, file_name = file_name))
+}
+```
+
+Taking into consideration the if the values not bee reversed
+```{r}
+object <- deseq_filteration(tibble =  results_frame, file_name = "test1_2", pval_cutoff = 0.01, rev = FALSE)
+```
+
+Taking into consideration if the values have been reversed
+```{r}
+object2 <- deseq_filteration(tibble =  results_frame, file_name = "test1_2", pval_cutoff = 0.01, rev = TRUE)
+```
+
+```{r}
+genes <- object2$tibble_exp %>% rownames()
+genes
+```
+
+
+
+Using the Deseq_filteration function then converting the genenames to column for data prep into enrichr function
+```{r}
+object1 <- deseq_filteration(tibble =  results_frame, file_name = "test1_2", pval_cutoff = 0.01, rev = FALSE)
+object1 <- object1$tibble_exp %>% tibble::rownames_to_column("entrezgene_id")
+object1
+```
+Using enrichGO to get results Common exmaple is below
+```{r}
+key <- enrichGO(
+  genes,                    
+  "org.Hs.eg.db",           
+  ont = "BP",                
+  pvalueCutoff = 0.05,      
+  pAdjustMethod = "BH"      
+)
+
+key@results
+```
+
+
+Get to know you enrichr results and choose the organism and description to extract
+use enrichgo unpack to get you results in a readable item
+```{r}
+enrichgo_result <- key@result
+chosen_desc <- "stress response to metal ion"
+ensemble_dataset <- "hsapiens_gene_ensembl"
+deseq2_table <- object1
+enrichgo_unpack  <- enrichgo_unpack(deseq2_table, enrichgo_result, chosen_desc, ensemble_dataset)
+```
+
+Display
+```{r}
+enrichgo_unpack
+```
+
+
+
+Visual Functions: Must be used after DAVID_Annotation Function
+
+Fxn: Dot Plot
+
+Fxn: Volcano Plot
+
+Required columns: GSEA pvalue, GSEA Term, GSEA Count column
+
+Dot plot post process
+```{r}
+enrichgo_result <- key@result
+gsea_dotplot(enrichgo_result, 0.05, 'Count', 10, "Vignette Testing", file_name = "Vignette_testing")
+```
+Display by Count or Pvalue
+
+```{r}
+enrichgo_result <- key@result
+gsea_dotplot(enrichgo_result, 0.05, 'pvalue', 10, "Vignette Testing", file_name = "Vignette_testing")
+```
+
+Fxn: Volcano Plot
+
+Required data: your enrichGO results
+
+```{r}
+gsea_results <- enrichgo_unpack
+```
+
+Volcano Plot visual functions
+
+
+
+```{r}
+gsea_volplot(gsea_results)
+```
+Update goal Take in a list of descriptions and have them in the visual plots
+
+As of 4/12/2025 the motiff-finding is still being worked on.
+The RNA-Seq and ChIP-Seq Pipeline are almost finished.
+Update ChIP-Seq PP has run with the Tet2 real-big data: WT CUT&TAG
+
+Do do list
+Run ChIP-Seq PP on Tet2 KO CUT&TAG data
+
+Rework RNA-Seq pipeline
+
+Dock everything together
+
+MOTIF Finding tutorial almost done.
+```{r}
+```
+
+
+
