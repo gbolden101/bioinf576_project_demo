@@ -3,11 +3,13 @@
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/ChIPsim/inst/doc/ChIPsimIntro.pdf
 #https://github.com/humburg/ChIPsim/tree/master
 
+
 if(!require(dplyr)) install.packages("dplyr", dependencies=TRUE)
 if(!require("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("ChIPsim")
 if(!require(purrr)) install.packages("purrr", dependencies=TRUE)
 if(!require(purrr)) install.packages("actuar", dependencies=TRUE)
 if(!require(testthat)) install.packages("testthat", dependencies=TRUE)
+
 
 library(testthat)
 library(ChIPsim)

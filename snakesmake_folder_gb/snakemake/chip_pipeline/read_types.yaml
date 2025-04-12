@@ -1,0 +1,10 @@
+samples:
+  sample1:
+    type: paired
+    r1: ../data/chip_data/sample_1.fastq
+    r2: ../data/chip_data/sample_2.fastq
+  sample2:
+    type: single
+    r1: ../data/chip_data/sample.fastq.gz
+
+
