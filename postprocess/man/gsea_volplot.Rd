@@ -5,7 +5,13 @@
 \title{arguments: gsea_results,
 gsea_result desc: should have following columns: a gene_id, gsea_pvalue, gsea_term,gsea_count}
 \usage{
-gsea_volplot(gsea_results)
+gsea_volplot(
+  gsea_results,
+  unique = FALSE,
+  lower_xlim = 10,
+  upper_xlim = 10,
+  step = 1
+)
 }
 \description{
 arguments: gsea_results,

@@ -61,7 +61,7 @@ gsea_dotplot <- function(gsea_results, gspval_cutoff, org_by, num_disp, graph_ti
 #' @import ggrepel
 
 
-gsea_volplot <- function(gsea_results){
+gsea_volplot <- function(gsea_results, unique = FALSE, lower_xlim = 10, upper_xlim = 10, step = 1){
   #setting the color
 
   gsea_results$color <- ifelse(gsea_results$log2FoldChange > 0, "Upregulated",  "Downregulated")
@@ -73,6 +73,9 @@ gsea_volplot <- function(gsea_results){
     arrange(padj) %>%
     mutate(delabel = ifelse(row_number() <= 10, as.character(external_gene_name), ""))
 
+  if(unique) {
+    gsea_results <- gsea_results %>% distinct(external_gene_name, .keep_all = TRUE)
+  }
 
   volplot <- ggplot(gsea_results) +
     aes(x = log2FoldChange, y = -log10(pvalue), color = color, label = delabel) +
@@ -99,8 +102,8 @@ gsea_volplot <- function(gsea_results){
     geom_text(nudge_y = 0.5, check_overlap = TRUE) +
 
     geom_text_repel(max.overlaps = Inf) +
-    coord_cartesian(xlim = c(-30, 30)) +
-    scale_x_continuous(breaks = seq(-30, 30, 5))
+    coord_cartesian(xlim = c(lower_xlim, upper_xlim)) +
+    scale_x_continuous(breaks = seq(lower_xlim, upper_xlim, step))
 
   return(list(volplot, gsea_results))
 }

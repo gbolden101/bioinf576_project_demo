@@ -56,10 +56,11 @@ enrichgo_unpack <- function(deseq2_table, enrichgo_result, chosen_desc, ensembl_
   #create an empty vector
   path_vector <- c()
   #for each index in the first column of numbers
-  for (i in 1) {
+  for (i in seq_along(cluster$Description)) {
     #replicate the name of the Description for the length of the GO term in column 1
-    path_vector <- c(path_vector, rep(cluster$Description[i], length(cluster[[i]])))
+    path_vector <- c(path_vector, rep(cluster$Description[i], length(extract_result[[i]])))
   }
+
 
   # make new tibble that pairs the name of the Pathway from the GOTerm and enriched Entrez ID from the "post-processed" GeneID column
   pathway_tibble <- tibble(gene_desc = path_vector, entrezgene_id = unlist(extract_result))
@@ -73,7 +74,11 @@ enrichgo_unpack <- function(deseq2_table, enrichgo_result, chosen_desc, ensembl_
   final_path_tibble <- final_path_tibble %>% mutate(entrezgene_id = as.character(entrezgene_id))
   final_path_tibble
 
-  final_path_fc_tibble <- inner_join(final_path_tibble, deseq2_table, by = "entrezgene_id")
+  if (!"external_gene_name" %in% colnames(deseq2_table)) {
+    colnames(deseq2_table)[1] <- "external_gene_name"
+  }
+
+  final_path_fc_tibble <- inner_join(final_path_tibble, deseq2_table, by = "external_gene_name")
   final_path_fc_tibble
   return(final_path_fc_tibble)
 }
