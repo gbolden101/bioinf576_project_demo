@@ -1,96 +1,135 @@
-SAMPLES = glob_wildcards("../data/paired_dat{sample}.fq").sample
+import os
+from glob import glob
+
+# Identify Paired-end prefixes explicitly from *_1.fastq files
+PAIRED_PREFIXES = [
+    os.path.basename(f).replace("_1.fastq", "")
+    for f in glob("../data/rna_data/*_1.fastq")
+]
 
 rule all:
     input:
-        expand("../rna_output/rna_cutadapt/cut_{sample}.1.fastq", sample=SAMPLES),
-        expand("../rna_output/rna_cutadapt/cut_{sample}.2.fastq", sample=SAMPLES),
-        "../rna_output/star_index/STARindex.done",
-        expand("../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
-        expand("../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam.bai", sample=SAMPLES),
-        expand("../rna_output/featurecounts/merged_counts.txt")
+        expand("../rna_output/rna_cutadapt/{prefix}_1.trimmed.fastq", prefix=PAIRED_PREFIXES),
+        expand("../rna_output/rna_cutadapt/{prefix}_2.trimmed.fastq", prefix=PAIRED_PREFIXES),
+        "../rna_output/index_dummy.txt",
+        "../data/rna_data/mm10.fa",
+        "../data/rna_data/mm10.ncbiRefSeq.gtf",
+        "../rna_output/star_index/star_index_done.txt",
+        expand("../rna_output/star_aligned/{prefix}.Aligned.sortedByCoord.out.bam", prefix=PAIRED_PREFIXES),
+        expand("../rna_output/star_aligned/{prefix}.Aligned.sortedByCoord.out.bam.bai", prefix=PAIRED_PREFIXES),
+        "../rna_output/featurecounts/merged_counts.txt"
 
-rule cutadapt:
+rule cutadapt_paired:
     input:
-        r1 = "../data/paired_dat1.fq",
-        r2 = "../data/paired_dat2.fq"
+        r1 = "../data/rna_data/{prefix}_1.fastq",
+        r2 = "../data/rna_data/{prefix}_2.fastq"
     output:
-        r1 = "../rna_output/rna_cutadapt/cut_{sample}.1.fastq",
-        r2 = "../rna_output/rna_cutadapt/cut_{sample}.2.fastq"
+        r1_trimmed = "../rna_output/rna_cutadapt/{prefix}_1.trimmed.fastq",
+        r2_trimmed = "../rna_output/rna_cutadapt/{prefix}_2.trimmed.fastq"
+    threads: 32
     shell:
         """
-        mkdir -p ../rna_output &&
         mkdir -p ../rna_output/rna_cutadapt &&
-        cutadapt -q 5 -Q 15,20 -o {output.r1} -p {output.r2} {input.r1} {input.r2}
+        cutadapt -j {threads} \
+            -q 5 -Q 15,20 \
+            --minimum-length 20 \
+            -o {output.r1_trimmed} -p {output.r2_trimmed} \
+            {input.r1} {input.r2}
         """
-
-rule index_star:
-    input:
-        ref="../sim_data/inputs/chr1_10M.fa",
-        gtf="../sim_data/inputs/chr1_mm10_trimmed.gtf"
+rule write_dummy:
     output:
-        done_flag= "../rna_output/star_index/STARindex.done",
-#this file is used as a dummy flag for the
-        index_dir = directory("../rna_output/star_index")
-    threads: 16
+        "../rna_output/index_dummy.txt"
+    shell:
+        "echo 'ref_files index dummy' > {output}"
+
+rule get_ref_files:
+    input:
+        dummy = rules.write_dummy.output
+    output:
+        fasta = "../data/rna_data/mm10.fa",
+        gtf = "../data/rna_data/mm10.ncbiRefSeq.gtf"
+    params:
+        ref_fa = "../data/rna_data/mm10.fa",
+        ref_gtf = "../data/rna_data/mm10.ncbiRefSeq.gtf",
+        ref_url = "https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.fa.gz",
+        gtf_url = "https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/genes/mm10.ncbiRefSeq.gtf.gz"
     shell:
         """
-        mkdir -p ../rna_output/star_index &&
+        wget -O {params.ref_fa}.gz {params.ref_url} &&
+        gunzip -c {params.ref_fa}.gz > {output.fasta} &&
+        rm {params.ref_fa}.gz &&
+        wget -O {params.ref_gtf}.gz {params.gtf_url} &&
+        gunzip -c {params.ref_gtf}.gz > {output.gtf} &&
+        rm -f {params.ref_gtf}.gz
+        """
+
+rule index_star_paired_large:
+    input:
+        fasta_ref = rules.get_ref_files.output.fasta,
+        gtf_ref = rules.get_ref_files.output.gtf
+    output:
+        index_dir = directory("../rna_output/star_index"),
+        flag = "../rna_output/star_index/star_index_done.txt"
+    threads: 32
+    shell:
+        """
+        mkdir -p {output.index_dir} &&
         STAR --runThreadN {threads} \
-        --runMode genomeGenerate \
-        --genomeSAindexNbases 10 \
-        --genomeDir {output.index_dir} \
-        --genomeFastaFiles {input.ref} \
-        --sjdbGTFfile {input.gtf} &&
-        touch {output.done_flag}
+             --runMode genomeGenerate \
+             --genomeSAindexNbases 10 \
+             --genomeDir {output.index_dir} \
+             --genomeFastaFiles {input.fasta_ref} \
+             --sjdbGTFfile {input.gtf_ref} &&
+        touch {output.flag}
         """
-        
-rule star_align:
+
+rule star_align_large:
     input:
-        r1 = "../rna_output/rna_cutadapt/cut_{sample}.1.fastq",
-        r2 = "../rna_output/rna_cutadapt/cut_{sample}.2.fastq"
+        r1_trimmed = "../rna_output/rna_cutadapt/{prefix}_1.trimmed.fastq",
+        r2_trimmed = "../rna_output/rna_cutadapt/{prefix}_2.trimmed.fastq",
+        index_done="../rna_output/star_index/star_index_done.txt" 
     output:
-        bam = "../rna_output/star_aligned/{sample}.bam"
+        bam = "../rna_output/star_aligned/{prefix}.Aligned.sortedByCoord.out.bam"
     log:
-        "../rna_output/star_aligned/logs/{sample}.log"
-    threads: 8
+        "../rna_output/star_aligned/logs/{prefix}.log"
+    threads: 32
     shell:
         """
-        mkdir -p ../rna_output/star_aligned/logs
-
+        mkdir -p ../rna_output/star_aligned/logs &&
         STAR --runThreadN {threads} \
              --genomeDir ../rna_output/star_index \
-             --readFilesIn {input.r1} {input.r2} \
-             --outFileNamePrefix ../rna_output/star_aligned/{wildcards.sample}. \
+             --readFilesIn {input.r1_trimmed} {input.r2_trimmed} \
+             --outFileNamePrefix ../rna_output/star_aligned/{wildcards.prefix}. \
              --outSAMtype BAM SortedByCoordinate \
              --outSAMunmapped Within \
              --outSAMattributes Standard \
              > {log} 2>&1
-
-        mv ../rna_output/star_aligned/{wildcards.sample}.Aligned.sortedByCoord.out.bam {output.bam}
         """
-#need to combine with htseq later --> baby steps
+
 rule index_bam:
     input:
-        bam = "../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam"
+        bam = "../rna_output/star_aligned/{prefix}.Aligned.sortedByCoord.out.bam"
     output:
-        bai = "../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam.bai"
+        bai = "../rna_output/star_aligned/{prefix}.Aligned.sortedByCoord.out.bam.bai"
     shell:
         """
         samtools index {input.bam}
         """
+
 rule featurecounts:
     input:
-        bam = expand("../rna_output/star_aligned/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES)
+        bam = expand("../rna_output/star_aligned/{prefix}.Aligned.sortedByCoord.out.bam", prefix=PAIRED_PREFIXES)
     output:
-        counts="../rna_output/featurecounts/merged_counts.txt"
+        counts = "../rna_output/featurecounts/merged_counts.txt"
     params:
-        gtf="../sim_data/inputs/chr1_mm10_trimmed.gtf"
+        gtf = rules.get_ref_files.output.gtf
     shell:
         """
         mkdir -p ../rna_output/featurecounts &&
         featureCounts -p --countReadPairs \
-                    -t exon -g gene_id \
-                    -a {params.gtf} \
-                    -o {output.counts} {input.bam}
+                      -t exon -g gene_id \
+                      -a {params.gtf} \
+                      -o {output.counts} {input.bam}
         """
+
         

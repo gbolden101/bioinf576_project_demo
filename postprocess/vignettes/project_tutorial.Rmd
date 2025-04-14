@@ -1,11 +1,16 @@
 ---
 title: "project_tutorial"
-output: rmarkdown::html_vignette
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
 vignette: >
   %\VignetteIndexEntry{project_tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+
 Hello. A lot of development is currently underway.
 As of 4/11/2025 The following needs to get done by 4/14/2025:
 
@@ -26,15 +31,15 @@ Before running
 Ensure your directory tree looks similar to the example below
 
 snakemake/
-├── Snakefile                      # Main workflow
-├── config/
+|── Snakefile                      # Main workflow
+|── config/
 │   └── config.yaml                # Parameters, sample info, etc.
-├── envs/
+|─ envs/
 │   └── chip_pipeline.yaml        # Conda environments
-├── scripts/
+|── scripts/
 │   ├── custom_analysis.R         # R analysis scripts
 │   └── helper_functions.py       # Python helpers
-├── data/
+|── data/
 │   └── chip_data/
 |                           # Raw fastq files, e.g., SRRxxxx_1.fastq
 |── chip_pipleine/
@@ -372,8 +377,7 @@ key <- enrichGO(
   pvalueCutoff = 0.05,      
   pAdjustMethod = "BH"      
 )
-
-key@results
+enrichgo_result <- key@result
 ```
 
 

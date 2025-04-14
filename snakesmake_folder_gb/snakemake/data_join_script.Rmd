@@ -1,0 +1,31 @@
+```{r}
+library("tidyverse")
+library("vroom")
+```
+
+# The script location will in the snakemake main folder and
+#pull from two sources: the rna_outputs/featureCounts and the chip_outputs/
+```{r}
+featureCounts_result <- ("./rna_output/featurecounts/merged_counts.txt")
+
+raw_data <- read.table(featureCounts_result, header = TRUE, sep = "\t", comment.char = "#", quote = "")
+
+annotation_cols <- c("Geneid", "Chr", "Start", "End", "Strand", "Length")
+count_data <- raw_data[, c("Geneid", setdiff(names(raw_data), annotation_cols))]
+
+# Optional: Rename columns to simplify (remove full paths if present)
+colnames(count_data) <- gsub(".*/|.bam$", "", colnames(count_data))  # get just sample names
+
+# Example: Define groups based on sample name
+group_list <- list(
+  control = grep("^control", colnames(count_data), value = TRUE),
+  treated = grep("^treated", colnames(count_data), value = TRUE)
+)
+
+
+count_data
+#write.table(count_data, file = output_file, sep = "\t", row.names = FALSE, quote = FALSE)
+
+#cat("Saved cleaned TSV to", output_file, "\n")
+```
+
