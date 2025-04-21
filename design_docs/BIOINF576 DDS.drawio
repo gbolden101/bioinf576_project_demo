@@ -148,8 +148,8 @@
             <mxPoint x="279" y="939.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-52" value="&lt;b&gt;Merge by Annotation&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="170" y="970" width="140" height="30" as="geometry" />
+        <mxCell id="zlOrH_XaMXWNnFcmVBdB-52" value="&lt;b&gt;Merge by GeneName (EntrezID)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="117.5" y="970" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-56" value="" style="endArrow=classic;html=1;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-60" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
