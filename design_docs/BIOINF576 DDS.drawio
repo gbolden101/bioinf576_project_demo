@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" version="26.0.11">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" version="26.2.13">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="1812" dy="1323" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="786" dy="1136" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -151,15 +151,6 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-52" value="&lt;b&gt;Merge by Annotation&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="170" y="970" width="140" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-53" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-41" target="zlOrH_XaMXWNnFcmVBdB-54" edge="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="550" y="890" as="sourcePoint" />
-            <mxPoint x="370" y="810" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="zlOrH_XaMXWNnFcmVBdB-54" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;MORE statistical analysis needed for Peak Calling&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="450" y="820" width="191" height="20" as="geometry" />
-        </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-56" value="" style="endArrow=classic;html=1;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" target="zlOrH_XaMXWNnFcmVBdB-60" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="249" y="1070" as="sourcePoint" />
@@ -175,7 +166,7 @@
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-60" value="DAVID&amp;nbsp;&lt;div&gt;ClusterEnrich&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="190" y="1109" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-1" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-61" target="Kh6YC34l2GPnNW1pjVAm-0">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-1" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-61" target="Kh6YC34l2GPnNW1pjVAm-0" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="zlOrH_XaMXWNnFcmVBdB-61" value="GSEA results" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
@@ -202,46 +193,46 @@
         <mxCell id="kOGGm8QfCaD-iwoYW6c4-1" value="Final Table: TF, Motif&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="450" y="1340" width="260" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-0" value="Visual Results:&lt;div&gt;Volcano Plot + DotPLot&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-0" value="Visual Results:&lt;div&gt;Volcano Plot + DotPLot&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="190" y="1370" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-2" value="Use Volcano Plot and Dot Plot Functions" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-2" value="Use Volcano Plot and Dot Plot Functions" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="279" y="1330" width="121" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-6" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="Kh6YC34l2GPnNW1pjVAm-3" target="Kh6YC34l2GPnNW1pjVAm-5">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-6" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="Kh6YC34l2GPnNW1pjVAm-3" target="Kh6YC34l2GPnNW1pjVAm-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-3" value="Use Pre-Processing Pipeline for" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-3" value="Use Pre-Processing Pipeline for" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="560" y="120" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-4" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Unsure To use ATAC-Seq data&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-4" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;ATAC-Seq (NA)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="527" y="80" width="210" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-5" value="Ultimate Goal:&lt;div&gt;To use ATAC-Seq data to confirm TF locations&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-5" value="Ultimate Goal:&lt;div&gt;To use ATAC-Seq data to confirm TF locations&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="560" y="310" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-7" value="&lt;b&gt;Unsure Pipeline/ TBD&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-7" value="&lt;b&gt;Pipeline Not Available&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="630" y="240" width="100" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-8" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Extracting ATAC-Seq Peaks for motiff finding using a potential pre-processesing pipeline TBD&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-8" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Extracting ATAC-Seq Peaks for motiff finding using a potential pre-processesing pipeline TBD&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="510" y="950" width="270" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-9" value="Quetion for Critina:&lt;div&gt;1. Is ATAC-Seq data necessary to justify the legitamacy for the motiff&#39;s ?&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;2. How would use ATAC-seq data with ChIP seq data ?&lt;/div&gt;&lt;div&gt;What we know: ATAC-Seq tells us what Histones are accesable to the TFs&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-9" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;2. How would use ATAC-seq data with ChIP seq data ?&lt;/div&gt;&lt;div&gt;What we know: ATAC-Seq tells us what Histones are accessible to the TFs&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="474" y="350" width="316" height="270" as="geometry" />
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-11" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="Kh6YC34l2GPnNW1pjVAm-9">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-11" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;entryX=0.557;entryY=0.852;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" target="Kh6YC34l2GPnNW1pjVAm-9" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="655" y="930" as="sourcePoint" />
             <mxPoint x="705" y="880" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-12" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.7;exitY=-0.035;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-66">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-12" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.7;exitY=-0.035;exitDx=0;exitDy=0;exitPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="zlOrH_XaMXWNnFcmVBdB-66" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="595" y="1030" as="sourcePoint" />
             <mxPoint x="645" y="980" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Kh6YC34l2GPnNW1pjVAm-13" value="&lt;b&gt;&lt;font style=&quot;color: rgb(255, 51, 51);&quot;&gt;Project Title: Motiff Calling for Cancer Cells&lt;/font&gt;&lt;/b&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="Kh6YC34l2GPnNW1pjVAm-13" value="&lt;b&gt;&lt;font style=&quot;color: rgb(255, 51, 51);&quot;&gt;Project Title: Motiff callin&lt;/font&gt;&lt;/b&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="480" y="20" width="270" height="30" as="geometry" />
         </mxCell>
       </root>
