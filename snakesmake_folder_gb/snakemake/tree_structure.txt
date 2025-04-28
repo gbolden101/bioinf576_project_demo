@@ -1,0 +1,35 @@
+.
+├── chip_output
+│   └── macs2_output
+├── chip_pipeline
+│   ├── FASTQ_filter.ipynb
+│   ├── Snakefile
+│   ├── config_reads.yaml
+│   ├── read_types.yaml
+│   └── sim_real_reads.py
+├── commands_to_run.sh
+├── data
+│   ├── chip_data
+│   ├── rna_data
+│   ├── sim_reads.fastq
+│   └── sim_rnaseq_reads
+├── data_join_script.Rmd
+├── envs
+│   ├── chip_pipeline.yaml
+│   ├── environment.yaml
+│   └── rna_pipeline.yaml
+├── rna_output
+│   └── featurecounts
+├── rna_pipeline
+│   └── Snakefile
+├── sim_data
+│   ├── R
+│   ├── README.txt
+│   ├── inputs
+│   ├── sim_chip_output
+│   └── sim_rnaseq_reads
+├── sim_referance.sh
+├── snake_commands_to_run.sh
+└── tree_structure.txt
+
+17 directories, 16 files

@@ -1,0 +1,90 @@
+rule all:
+    input:
+        "../gibbs_output/motif_logo.pdf"
+
+rule dummy_flag:
+    output:
+        dummy = "../data/gibbs_data/ref_dummy.txt"
+    shell:
+        "echo 'ref_file_check dummy' > {output.dummy}"
+
+rule get_ref_files:
+    input:
+        dummy = rules.dummy_flag.output
+    output:
+        fasta = "../data/gibbs_data/mm10.fa",
+        gtf = "../data/gibbs_data/mm10.ncbiRefSeq.gtf"
+    params:
+        ref_fa = "../data/gibbs_data/mm10.fa",
+        ref_gtf = "../data/gibbs_data/mm10.ncbiRefSeq.gtf",
+        ref_url = "https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.fa.gz",
+        gtf_url = "https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/genes/mm10.ncbiRefSeq.gtf.gz"
+    shell:
+        """
+        wget -O {params.ref_fa}.gz {params.ref_url} &&
+        gunzip -c {params.ref_fa}.gz > {output.fasta} &&
+        rm {params.ref_fa}.gz &&
+        wget -O {params.ref_gtf}.gz {params.gtf_url} &&
+        gunzip -c {params.ref_gtf}.gz > {output.gtf} &&
+        rm -f {params.ref_gtf}.gz
+        """
+        
+rule bed_ops:
+    input:
+        "../data/gibbs_data/Tet2_RNAChIP_red.bed"
+    output:
+        sorted_bed = "../data/gibbs_data/Tet2_RNAChIP_reduced.sorted.bed"
+    shell:
+        """
+        sort-bed {input} > {output.sorted_bed}
+        """
+
+rule bedtools:
+    input:
+        gtf = rules.get_ref_files.output.gtf,
+        
+        bed = rules.bed_ops.output.sorted_bed,
+        
+        fasta = rules.get_ref_files.output.fasta
+    output:
+        extracted_gtf = "../data/gibbs_data/extracted.gtf",
+        extracted_fasta = "../data/gibbs_data/tet2_seq.fa"
+    shell:
+        """
+        bedtools intersect -a {input.gtf} -b {input.bed} > {output.extracted_gtf} &&
+        rm -f {input.gtf} &&
+        bedtools getfasta -fi {input.fasta} -bed {input.bed} -fo {output.extracted_fasta} &&
+        rm -f {input.fasta} &&
+        rm -f "../data/gibbs_data/mm10.fa.fai" {rules.dummy_flag.output.dummy} {input.bed}
+        """
+
+
+rule check_gibbs_inputs:
+    input:
+        files = [
+            "../data/gibbs_data/extracted.gtf",
+            "../data/gibbs_data/tet2_seq.fa"]
+    output:
+        touch("../data/logs/file_check.done")
+    run:
+        import os
+        import subprocess
+        for f in input.files:
+            if not os.path.exists(f):
+                raise ValueError(f"Missing expected file: {f}")
+                
+rule gibbs:
+    input:
+        "../data/logs/file_check.done",
+        extracted_gtf = rules.bedtools.output.extracted_gtf,
+        extracted_fasta = rules.bedtools.output.extracted_fasta
+    output:
+        "../gibbs_output/motif_logo.pdf"
+    shell:
+        """
+        mkdir -p '../gibbs_output' &&
+        python gibbs.py
+        """
+        
+    
+    

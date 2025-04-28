@@ -1,0 +1,44 @@
+def reverse_complement(seq):
+    """Get the reverse complement of a nucleotide sequence
+
+    Returns the reverse complement of the input string representing a DNA 
+    sequence. Works only with DNA sequences consisting solely of  A, C, G, T or N 
+    characters. Preserves the case of the input sequence.
+
+    Args:
+        seq (str): a DNA sequence string
+
+    Returns:
+        (str): The reverse complement of the input DNA sequence string.
+    """
+    
+    # Used to easily translate strings
+    compStrDNA = str.maketrans('ACGTacgt', 'TGCAtcga')
+
+    # Translate then reverse seq
+    return seq.translate(compStrDNA)[::-1]
+
+def get_seq(seq, start, end, strand, size):
+    """Get the desired sequence
+    
+    Args:
+        seq (str): nucleotide sequence
+        start (int): left-most desired nucleotide sequence
+        end (int): right-most desired nucleotide sequence
+        strand (str): Whether the entry is on the forward (+), backward (-) strand or N/A (.)
+        size (int): how far upstream to get extra sequence (default: 50)
+    
+    Returns:
+        promoter_seq (str): the desired GFF entry and its upstream promoter sequence
+    """
+    promoter_seq = ''
+
+    if strand == '-':
+        end_index = min(len(seq), end + size)
+        promoter_seq = reverse_complement(seq[end:(end+size)])
+    else :
+        start_index = max(0, start - size - 1)
+        end_index = start - 1
+        promoter_seq = seq[(start-size-1):(start-1)]
+
+    return promoter_seq

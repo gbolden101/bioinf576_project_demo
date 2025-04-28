@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - snakemake-minimal=7.24.0  # Updated version for better compatibility
+  - bedops=2.4.41
+  - bedtools=2.31.1
+  - pdf2svg
+  - python=3.10
+  - numpy
+  - seqlogo
